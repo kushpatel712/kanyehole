@@ -10,16 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;//
 //
 //
-import android.app.Activity;
-import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
@@ -32,15 +27,15 @@ import java.util.TimerTask;
 
 public class GameActivity extends ActionBarActivity {
 
-
-    ArcView mBallView2 = null;
+    private Arc kanyeArc = null;
+    private ArcView arcView = null;
     Handler RedrawHandler = new Handler(); //so redraw occurs in main thread
     Timer mTmr = null;
     TimerTask mTsk = null;
     int scores = 0;
     int mScrWidth, mScrHeight;
-    android.graphics.PointF mBallPos, mBallSpd;
-    static double angle = 0;
+
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -58,37 +53,33 @@ public class GameActivity extends ActionBarActivity {
         Display display = getWindowManager().getDefaultDisplay();
         mScrWidth = display.getWidth();
         mScrHeight = display.getHeight();
-        mBallPos = new android.graphics.PointF();
-        mBallSpd = new android.graphics.PointF();
+        kanyeArc = new Arc(mScrWidth,mScrHeight);
+
 
         //create variables for ball position and speed
-        mBallPos.x = mScrWidth / 2;
-        mBallPos.y = mScrHeight / 2;
-        mBallSpd.x = 0;
-        mBallSpd.y = 0;
 
-        mBallView2 = new ArcView(this, mScrWidth / 2, mBallPos.y, 50, 0, angle, mScrWidth / 2, mScrHeight / 2);
+
+        arcView = new ArcView(this, mScrWidth / 2, kanyeArc.getYPosition(), 50, 0, 0);
         final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
 
-        mainView.addView(mBallView2); //add ball to main screen
-        mBallView2.invalidate(); //call onDraw in BallView
+        mainView.addView(arcView); //add ball to main screen
+        arcView.invalidate(); //call onDraw in BallView
         //listener for accelerometer, use anonymous class for simplicity
         ((SensorManager) getSystemService(Context.SENSOR_SERVICE)).registerListener(
-                new SensorEventListener() {
-                    @Override
-                    public void onSensorChanged(SensorEvent event) {
-                        //set ball speed based on phone tilt (ignore Z axis)
-                        mBallSpd.x = -event.values[0];
-                        mBallSpd.y = event.values[1];
-                        //timer event will redraw ball
-                    }
+                        new SensorEventListener() {
+                            @Override
+                            public void onSensorChanged(SensorEvent event) {
+                                //set ball speed based on phone tilt (ignore Z axis)
+                                kanyeArc.setSpeed(event.values[0],event.values[1]);
+                                //timer event will redraw ball
+                            }
 
-                    @Override
-                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                    } //ignore this event
-                },
-                ((SensorManager) getSystemService(Context.SENSOR_SERVICE))
-                        .getSensorList(Sensor.TYPE_ACCELEROMETER).get(0), SensorManager.SENSOR_DELAY_NORMAL);
+                            @Override
+                            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                            } //ignore this event
+                        },
+                        ((SensorManager) getSystemService(Context.SENSOR_SERVICE))
+                                .getSensorList(Sensor.TYPE_ACCELEROMETER).get(0), SensorManager.SENSOR_DELAY_NORMAL);
 
 
 
@@ -127,42 +118,10 @@ public class GameActivity extends ActionBarActivity {
         mTmr = new Timer();
         mTsk = new TimerTask() {
             public void run() {
-
-                mBallPos.x += mBallSpd.x;
-                mBallPos.y += mBallSpd.y;
-                angle += mBallSpd.x;
-                float x = (float) (mScrWidth / 2 + 50 * Math.sin(angle));
-                float y = (float) (mScrHeight / 2 + 50 * Math.cos(angle));
-                //if ball goes off screen, reposition to opposite side of screen
-                if (mBallPos.x > mScrWidth) mBallPos.x = 0;
-                if (mBallPos.y > mScrHeight) mBallPos.y = 0;
-                if (mBallPos.x < 0) mBallPos.x = mScrWidth;
-                if (mBallPos.y < 0) mBallPos.y = mScrHeight;
-                //update ball class instance
-                mBallView2.mX = x;
-                mBallView2.mY = y;
-                int count = 0;
-                if (((x / mBallPos.x) > .95 && (x / mBallPos.x) < 1.05) &&
-                        ((y / mBallPos.y) > .95 && (y / mBallPos.y) < 1.05)) {
-                    mBallPos.x = mScrWidth;
-                    mBallPos.y = mScrHeight;
-
-                    //TextView solveText2 = (TextView) findViewById(R.id.score);
-                    scores++;
-                    //solveText2.setText(Integer.toString(scores));
-                } else {
-                    //TextView solveText2 = (TextView) findViewById(R.id.score);
-                    //if(count==0){
-                    //solveText2.setText("dfgdf");
-                    //count++;
-                    //}
-                    //System.out.println("no");
-                }
-
-                //redraw ball. Must run in background thread to prevent thread lock.
+                kanyeArc.updatePosition(arcView);
                 RedrawHandler.post(new Runnable() {
                     public void run() {
-                        mBallView2.invalidate();
+                        arcView.invalidate();
                     }
                 });
             }

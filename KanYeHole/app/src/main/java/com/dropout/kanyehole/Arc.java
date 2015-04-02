@@ -4,7 +4,13 @@ package com.dropout.kanyehole;
  * Created by Kush on 4/1/2015.
  */
 public class Arc {
-    private static Arc instance = null;
+    /*
+    * TODO: Make me a Flyweight! :D
+    * */
+    public class Obstacles
+    {
+    }
+    private static Arc instance = new Arc(0,0);
     android.graphics.PointF position, speed;
     double angle = 0;
     int mScrWidth, mScrHeight;

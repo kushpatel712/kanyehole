@@ -53,7 +53,8 @@ public class GameActivity extends ActionBarActivity {
         Display display = getWindowManager().getDefaultDisplay();
         mScrWidth = display.getWidth();
         mScrHeight = display.getHeight();
-        kanyeArc = new Arc(mScrWidth,mScrHeight);
+        kanyeArc = Arc.getInstance();
+        kanyeArc.position.set(mScrWidth,mScrHeight);
 
 
         //create variables for ball position and speed

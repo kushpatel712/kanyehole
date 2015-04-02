@@ -4,10 +4,11 @@ package com.dropout.kanyehole;
  * Created by Kush on 4/1/2015.
  */
 public class Arc {
+    private static Arc instance = null;
     android.graphics.PointF position, speed;
     double angle = 0;
     int mScrWidth, mScrHeight;
-    public Arc(int mScrWidth, int mScrHeight ){
+    private Arc(int mScrWidth, int mScrHeight ){
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();
         position.x = mScrWidth/2;
@@ -16,6 +17,13 @@ public class Arc {
         speed.y = 0;
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
+    }
+
+    public static Arc getInstance()
+    {
+        if(instance == null)
+            instance = new Arc(0,0);
+        return instance;
     }
 
     public void setXPosition(float x){

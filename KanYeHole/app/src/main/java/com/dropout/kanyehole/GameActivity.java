@@ -28,7 +28,7 @@ import java.util.TimerTask;
 public class GameActivity extends ActionBarActivity {
 
     private Arc kanyeArc = null;
-    private Objects circle=null;
+    private Obstacle circle=null;
     private ArcView arcView = null;
     Handler RedrawHandler = new Handler(); //so redraw occurs in main thread
     Timer mTmr = null;
@@ -55,14 +55,17 @@ public class GameActivity extends ActionBarActivity {
         mScrWidth = display.getWidth();
         mScrHeight = display.getHeight();
         kanyeArc = Arc.getInstance();
-        kanyeArc.position.set(mScrWidth,mScrHeight);
-        circle= new Objects(10,mScrWidth,mScrHeight);
+        kanyeArc.setPosition(mScrWidth, mScrHeight);
+        //circle= new Obstacle(10,mScrWidth,mScrHeight);
 
 
         //create variables for ball position and speed
 
 
         arcView = new ArcView(this, mScrWidth / 2, kanyeArc.getYPosition(), 50, 0, 0);
+        arcView.registerObject(kanyeArc);
+        ObstacleGenerator obsGen = new ObstacleGenerator();
+        obsGen.generate(arcView,mScrWidth,mScrHeight);
         final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
 
         mainView.addView(arcView); //add ball to main screen
@@ -122,7 +125,8 @@ public class GameActivity extends ActionBarActivity {
         mTsk = new TimerTask() {
             public void run() {
                 kanyeArc.updatePosition(arcView);
-                circle.updatePosition(arcView);
+
+                //circle.updatePosition(arcView);
                 RedrawHandler.post(new Runnable() {
                     public void run() {
                         arcView.invalidate();

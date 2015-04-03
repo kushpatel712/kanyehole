@@ -9,6 +9,8 @@ import android.view.Display;
 import android.view.View;
 import 	android.graphics.RectF;
 
+import java.util.ArrayList;
+
 
 public class ArcView extends View {
 
@@ -21,6 +23,7 @@ public class ArcView extends View {
     private double angle;
     private int xx;
     private int yy;
+    private ArrayList<Drawable> drawList = new ArrayList<Drawable>();
   //  public RectF hi;
 
     public void setPosition(float x,float y){
@@ -53,22 +56,29 @@ public class ArcView extends View {
         mPaint.setStrokeWidth(50);
        // hi=new RectF(xx-xx/5,yy+xx/5,xx+xx/5,yy-xx/5);
     }
-
+    public void registerObject(Drawable obj){
+        drawList.add(obj);
+    }
     //called by invalidate()	
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mPaint.setColor(Color.GREEN);
-        int yyyy = getResources().getDisplayMetrics().heightPixels/4;
-        int xxxx = getResources().getDisplayMetrics().widthPixels/2;
-        RectF hi=new RectF(xxxx-xxxx/5,yyyy-xxxx/5,yyyy+xxxx/5,yyyy-+xxxx/5);
-        mPaint.setStrokeWidth(10);
-        float angs= (float)angle;
-        angs+=0.5f;
-       canvas.drawArc(new RectF(xxxx-(xxxx*2/5),yyyy-(xxxx*2/5),xxxx+(xxxx*2/5),yyyy+(xxxx*2/5)), (angs-30)%360, 60, false, mPaint);
-       mPaint.setColor(Color.RED);
-       //canvas.drawCircle(obX,obY,20,mPaint);
-        canvas.drawCircle(xxxx/2,yyyy/2,20,mPaint);
+        //System.out.println("length of drawables"+drawList.size());
+        for (Drawable obj: drawList){
+            obj.draw(canvas,getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
+        }
+//        mPaint.setColor(Color.GREEN);
+//        int yyyy = getResources().getDisplayMetrics().heightPixels/4;
+//        int xxxx = getResources().getDisplayMetrics().widthPixels/2;
+//        RectF hi=new RectF(xxxx-xxxx/5,yyyy-xxxx/5,yyyy+xxxx/5,yyyy-+xxxx/5);
+//        mPaint.setStrokeWidth(10);
+//        float angs= (float)angle;
+//        angs+=0.5f;
+//       canvas.drawArc(new RectF(xxxx-(xxxx*2/5),yyyy-(xxxx*2/5),xxxx+(xxxx*2/5),yyyy+(xxxx*2/5)), (angs-30)%360, 60, false, mPaint);
+//       mPaint.setColor(Color.RED);
+//       //canvas.drawCircle(obX,obY,20,mPaint);
+//        canvas.drawCircle(xxxx/2,yyyy/2,20,mPaint);
+
       // canvas.drawCircle(x,y,r,mPaint);
-    } 
+    }
 }

@@ -1,9 +1,14 @@
 package com.dropout.kanyehole;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+
 /**
  * Created by Kush on 4/1/2015.
  */
-public class Arc {
+public class Arc implements Drawable{
     /*
     * TODO: Make me a Flyweight! :D
     * */
@@ -14,6 +19,17 @@ public class Arc {
     android.graphics.PointF position, speed;
     double angle = 0;
     int mScrWidth, mScrHeight;
+    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public void draw(Canvas canvas, int height, int width){
+        paint.setColor(Color.GREEN);
+        int yyyy = height/4;
+        int xxxx = width/2;
+        RectF hi=new RectF(xxxx-xxxx/5,yyyy-xxxx/5,yyyy+xxxx/5,yyyy-+xxxx/5);
+        paint.setStrokeWidth(10);
+        float angs= (float)angle;
+        angs+=0.5f;
+        canvas.drawArc(new RectF(xxxx-(xxxx*2/5),yyyy-(xxxx*2/5),xxxx+(xxxx*2/5),yyyy+(xxxx*2/5)), (angs-30)%360, 60, false, paint);
+    }
     private Arc(int mScrWidth, int mScrHeight ){
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();

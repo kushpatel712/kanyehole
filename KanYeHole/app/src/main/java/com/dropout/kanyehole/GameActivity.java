@@ -28,6 +28,7 @@ import java.util.TimerTask;
 public class GameActivity extends ActionBarActivity {
 
     private Arc kanyeArc = null;
+    private Objects circle=null;
     private ArcView arcView = null;
     Handler RedrawHandler = new Handler(); //so redraw occurs in main thread
     Timer mTmr = null;
@@ -55,6 +56,7 @@ public class GameActivity extends ActionBarActivity {
         mScrHeight = display.getHeight();
         kanyeArc = Arc.getInstance();
         kanyeArc.position.set(mScrWidth,mScrHeight);
+        circle= new Objects(10,mScrWidth,mScrHeight);
 
 
         //create variables for ball position and speed
@@ -120,6 +122,7 @@ public class GameActivity extends ActionBarActivity {
         mTsk = new TimerTask() {
             public void run() {
                 kanyeArc.updatePosition(arcView);
+                circle.updatePosition(arcView);
                 RedrawHandler.post(new Runnable() {
                     public void run() {
                         arcView.invalidate();

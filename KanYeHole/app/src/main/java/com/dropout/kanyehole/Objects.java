@@ -1,35 +1,25 @@
 package com.dropout.kanyehole;
 
 /**
- * Created by Kush on 4/1/2015.
+ * Created by Kush on 4/1/2015
  */
-public class Arc {
+public class Objects {
     /*
     * TODO: Make me a Flyweight! :D
     * */
-   // public class Obstacles
-    //{
-    //}
-    private static Arc instance = new Arc(0,0);
     android.graphics.PointF position, speed;
     double angle = 0;
     int mScrWidth, mScrHeight;
-    private Arc(int mScrWidth, int mScrHeight ){
+    public Objects(int startAngle,int mScrWidth, int mScrHeight ){
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();
         position.x = mScrWidth/2;
         position.y = mScrHeight/4;
-        speed.x = 0;
-        speed.y = 0;
+        speed.x = 10*50 * (float) (Math.sin(startAngle));
+        speed.y = 10*50 * (float)(Math.cos(startAngle));
+        angle=startAngle;
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
-    }
-
-    public static Arc getInstance()
-    {
-        if(instance == null)
-            instance = new Arc(0,0);
-        return instance;
     }
 
     public void setXPosition(float x){
@@ -43,15 +33,11 @@ public class Arc {
         position.y = y;
     }
     public void updatePosition(ArcView v){
-        position.x += speed.x;
-        position.y += speed.y;
-        angle += speed.x;
-        float newX = (float) (mScrWidth / 2 + 50 * Math.sin(angle));
-        float newY = (float) (mScrHeight / 4 + 50 * Math.cos(angle));
-        //if ball goes off screen, reposition to opposite side of screen
-        //update ball class instance
-        v.setPosition(newX,newY);
-        v.setAngle(angle);
+       // setSpeed(speed.x,speed.y);
+        position.x = Math.abs((position.x +speed.x)%mScrWidth);
+        position.y =Math.abs((position.y+ speed.y)%mScrHeight);
+        v.setObjectPosition(position.x,position.y);
+        System.out.println(position.x+" "+position.y);
     }
     public float getXPosition(){
         return position.x;
@@ -60,8 +46,19 @@ public class Arc {
         return position.y;
     }
     public void setSpeed(float xSpeed, float ySpeed){
-        speed.x = xSpeed;
-        speed.y = ySpeed;
+        speed.x = xSpeed+(float) (50 * Math.sin(angle));
+        speed.y = ySpeed+ (float)(50 * Math.cos(angle));
     }
+
+
+
+    public float getObjectXPosition(){
+        return this.position.x;
+    }
+    public float getObjectYPosition(){
+        return this.position.y;
+    }
+
+
 
 }

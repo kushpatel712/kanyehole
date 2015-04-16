@@ -12,6 +12,7 @@ import android.view.MenuItem;//
 //
 import android.os.Handler;
 import android.view.Display;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.FrameLayout;
@@ -28,12 +29,15 @@ import java.util.TimerTask;
 public class GameActivity extends ActionBarActivity {
 
     private Arc kanyeArc = null;
+    private Object mPauseLock=new Object();
     private Obstacle circle=null;
     private ArcView arcView = null;
+    public boolean notPaused=true;
     Handler RedrawHandler = new Handler(); //so redraw occurs in main thread
     Timer mTmr = null;
     TimerTask mTsk = null;
     int scores = 0;
+    int hits=0;
     int mScrWidth, mScrHeight;
 
 
@@ -124,14 +128,16 @@ public class GameActivity extends ActionBarActivity {
         mTmr = new Timer();
         mTsk = new TimerTask() {
             public void run() {
-                kanyeArc.updatePosition(arcView);
+                if (notPaused)
+                    kanyeArc.updatePosition(arcView);
 
-                //circle.updatePosition(arcView);
-                RedrawHandler.post(new Runnable() {
-                    public void run() {
-                        arcView.invalidate();
-                    }
-                });
+                    //circle.updatePosition(arcView);
+                    RedrawHandler.post(new Runnable() {
+                        public void run() {
+                            arcView.invalidate();
+                        }
+                    });
+
             }
         }; // TimerTask
 
@@ -154,6 +160,23 @@ public class GameActivity extends ActionBarActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+    public void onBackPressed(){
+        super.onBackPressed();
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void pause(View view){
+        hits++;
+        if(hits%2==1) {
+            notPaused = false;
+            super.onPause();
+        }
+        else notPaused=true;
+
+
     }
 }
 

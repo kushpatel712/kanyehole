@@ -75,6 +75,12 @@ public class Arc implements Drawable{
     public float getYPosition(){
         return position.y;
     }
+    public float getXSpeed(){
+        return speed.x;
+    }
+    public float getYSpeed(){
+        return speed.y;
+    }
     public void setSpeed(float xSpeed, float ySpeed){
         speed.x = xSpeed;
         speed.y = ySpeed;

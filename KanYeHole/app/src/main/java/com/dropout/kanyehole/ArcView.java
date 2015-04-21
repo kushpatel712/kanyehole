@@ -1,6 +1,8 @@
 package com.dropout.kanyehole;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -19,10 +21,17 @@ public class ArcView extends View {
     private float obX;
     private float obY;
     private final int mR;
+    public Context c;
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private double angle;
     private int xx;
     private int yy;
+    Bitmap b= BitmapFactory.decodeResource(getResources(), R.drawable.kanyeheadpng);
+    Paint p =new Paint();
+    int length=getResources().getDisplayMetrics().widthPixels;
+    int height=getResources().getDisplayMetrics().heightPixels;
+
+    Arc arc=Arc.getInstance();
     private ArrayList<Drawable> drawList = new ArrayList<Drawable>();
   //  public RectF hi;
 
@@ -43,6 +52,7 @@ public class ArcView extends View {
    //construct new ball object
     public ArcView(Context context, float x, float y, int r,int color, double angle) {
         super(context);
+        c=context;
         //color hex is [transparency][red][green][blue]
         if (color==0)
         mPaint.setColor(0xFF00FF00); //not transparent. color is green
@@ -67,6 +77,21 @@ public class ArcView extends View {
         for (Drawable obj: drawList){
             obj.draw(canvas,getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
         }
+
+        float newX, newY;
+        double angle=arc.getAngle();
+        if(angle>180){
+            newY=10;
+        }
+        else
+        {
+            newY=-10;
+        }
+        newX = (float) (length / 2 + 70 * Math.sin(angle));
+        newY += (float) (height / 4 + 70 * Math.cos(angle));
+
+        canvas.drawBitmap(b, (newX+10), (newY+10), p);
+
 //        mPaint.setColor(Color.GREEN);
 //        int yyyy = getResources().getDisplayMetrics().heightPixels/4;
 //        int xxxx = getResources().getDisplayMetrics().widthPixels/2;
@@ -81,4 +106,5 @@ public class ArcView extends View {
 
       // canvas.drawCircle(x,y,r,mPaint);
     }
+    public Context getCont(){return this.c;}
 }

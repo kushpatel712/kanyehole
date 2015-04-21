@@ -1,5 +1,8 @@
 package com.dropout.kanyehole;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -19,6 +22,8 @@ public class Arc implements Drawable{
     android.graphics.PointF position, speed;
     double angle = 0;
     int mScrWidth, mScrHeight;
+    Context context=MyApplication.getAppContext();
+   // Bitmap b= BitmapFactory.decodeResource(context.getResources(), R.drawable.smallhead);
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public void draw(Canvas canvas, int height, int width){
         paint.setColor(Color.GREEN);
@@ -29,6 +34,7 @@ public class Arc implements Drawable{
         float angs= (float)angle;
         angs+=0.5f;
         canvas.drawArc(new RectF(xxxx-(xxxx*2/5),yyyy-(xxxx*2/5),xxxx+(xxxx*2/5),yyyy+(xxxx*2/5)), (angs-30)%360, 60, false, paint);
+       // canvas.drawBitmap(b,position.x,position.y,paint);
     }
     private Arc(int mScrWidth, int mScrHeight ){
         position = new android.graphics.PointF();
@@ -72,6 +78,7 @@ public class Arc implements Drawable{
     public float getXPosition(){
         return position.x;
     }
+    public double getAngle(){return angle;}
     public float getYPosition(){
         return position.y;
     }

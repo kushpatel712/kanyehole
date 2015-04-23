@@ -11,11 +11,13 @@ public class ObstacleFactory {
     public static Drawable getObstacle(String color, int mScrWidth, int mScrHeight) {
         Obstacle obstacle = (Obstacle)obstacleMap.get(color);
         int angle = (int)(Math.random()*360);
-        if(obstacle == null) {
-            obstacle = new Obstacle(angle, mScrWidth, mScrHeight);
-            obstacleMap.put(color, obstacle);
-           // System.out.println("Creating obstacle of color : " + color);
-        }
+        obstacle = new Obstacle(angle, mScrWidth, mScrHeight);
+        obstacleMap.put(color, obstacle);
+//        if(obstacle == null) {
+//            obstacle = new Obstacle(angle, mScrWidth, mScrHeight);
+//            obstacleMap.put(color, obstacle);
+//           // System.out.println("Creating obstacle of color : " + color);
+//        }
         return obstacle;
     }
 }

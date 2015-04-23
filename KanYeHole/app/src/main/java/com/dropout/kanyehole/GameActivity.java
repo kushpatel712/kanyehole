@@ -31,7 +31,7 @@ public class GameActivity extends ActionBarActivity {
     private Arc kanyeArc = null;
     private Object mPauseLock=new Object();
     private Obstacle circle=null;
-    private ArcView arcView = null;
+    private ObjectView arcView = null;
     public boolean notPaused=true;
     Handler RedrawHandler = new Handler(); //so redraw occurs in main thread
     Timer mTmr = null;
@@ -52,6 +52,7 @@ public class GameActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         setContentView(R.layout.game_layout);
+        MyApplication.setContext(this.getBaseContext());
         //create pointer to main screen
        // final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
 
@@ -67,7 +68,7 @@ public class GameActivity extends ActionBarActivity {
         //create variables for ball position and speed
 
 
-        arcView = new ArcView(this, mScrWidth / 2, kanyeArc.getYPosition(), 50, 0, 0);
+        arcView = new ObjectView(this, mScrWidth / 2, kanyeArc.getYPosition(), 50, 0, 0);
         arcView.registerObject(kanyeArc);
         ObstacleGenerator obsGen = new ObstacleGenerator();
         obsGen.generate(arcView,mScrWidth,mScrHeight);
@@ -81,7 +82,7 @@ public class GameActivity extends ActionBarActivity {
                             @Override
                             public void onSensorChanged(SensorEvent event) {
                                 //set ball speed based on phone tilt (ignore Z axis)
-                                kanyeArc.setSpeed(event.values[0],event.values[1]);
+                                kanyeArc.setSpeed(event.values[0]/3,event.values[1]/3);
                                 //timer event will redraw ball
                             }
 
@@ -127,11 +128,15 @@ public class GameActivity extends ActionBarActivity {
     {
         //create timer to move ball to new position
         mTmr = new Timer();
+        long time=System.currentTimeMillis();
         mTsk = new TimerTask() {
             public void run() {
                 if (notPaused)
                     kanyeArc.updatePosition(arcView);
-
+                if (System.currentTimeMillis()%200==199){
+                    ObstacleGenerator obsGen = new ObstacleGenerator();
+                    obsGen.generate(arcView, mScrWidth, mScrHeight);
+                }
                     //circle.updatePosition(arcView);
                     RedrawHandler.post(new Runnable() {
                         public void run() {

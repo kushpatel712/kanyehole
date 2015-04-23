@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
@@ -21,20 +22,42 @@ public class Arc implements Drawable{
     private static Arc instance = new Arc(0,0);
     android.graphics.PointF position, speed;
     double angle = 0;
+    float headX;
+    float headY;
     int mScrWidth, mScrHeight;
+    double radius;
     Context context=MyApplication.getAppContext();
-   // Bitmap b= BitmapFactory.decodeResource(context.getResources(), R.drawable.smallhead);
+    Bitmap b= BitmapFactory.decodeResource(context.getResources(), R.drawable.smallhead);
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public void draw(Canvas canvas, int height, int width){
         paint.setColor(Color.GREEN);
         int yyyy = height/4;
         int xxxx = width/2;
+        radius=xxxx*.7;
         RectF hi=new RectF(xxxx-xxxx/5,yyyy-xxxx/5,yyyy+xxxx/5,yyyy-+xxxx/5);
         paint.setStrokeWidth(10);
         float angs= (float)angle;
         angs+=0.5f;
-        canvas.drawArc(new RectF(xxxx-(xxxx*2/5),yyyy-(xxxx*2/5),xxxx+(xxxx*2/5),yyyy+(xxxx*2/5)), (angs-30)%360, 60, false, paint);
-       // canvas.drawBitmap(b,position.x,position.y,paint);
+        //canvas.drawArc(new RectF(xxxx-(xxxx*2/5),yyyy-(xxxx*2/5),xxxx+(xxxx*2/5),yyyy+(xxxx*2/5)), (angs-30)%360, 60, false, paint);
+        //System.out.println("angle:"+((angs-30)%360));
+        //System.out.println("cos:"+(double) (Math.cos(((angs-30)%360))));
+        //System.out.println(radius);
+       // canvas.drawBitmap(b,,((float)(mScrHeight / 2 + 50 * Math.sin(angle))));
+        //float headX = (float)(xxxx);
+        //System.out.println(headX);
+        headX=(float)(xxxx-15 + radius * Math.cos((angs*2*Math.PI/360)));
+        //float nX=float)(xxxx + 100 * Math.cos((angs)%360));
+        //float headX=-(float) (Math.cos(angs)*xxxx*.6);
+        //System.out.println("x:" + (xxxx-(xxxx*2/5))+ " headx:"+headX + " angle:" +angle +" sin:"+Math.sin(angle)+" arcang:"+((angs-30)%360));
+        headY=((float)(yyyy-15 + radius * Math.sin((angs*2*Math.PI/360))));
+        //float headY=-(float) (Math.sin(angs)*yyyy*.6);
+        canvas.drawBitmap(b,headX,headY,paint);
+        canvas.drawRect(new Rect(getheadX()+1,getheadY()+1,(getheadX()+bitWidth())*29/30-2,getheadY()+bitHeight()*2/3-2),paint);
+        paint.setColor(Color.GRAY);
+        canvas.drawRect(new Rect(getheadX()+1+bitWidth()/10,(getheadY()+bitHeight())*2/3-2,(getheadX()+bitWidth())*22/30-2,(getheadY()+bitHeight()*29/30)),paint);
+
+
+        //System.out.println("Drawing head at x crd: "+ headX);
     }
     private Arc(int mScrWidth, int mScrHeight ){
         position = new android.graphics.PointF();
@@ -64,7 +87,7 @@ public class Arc implements Drawable{
         position.x = x;
         position.y = y;
     }
-    public void updatePosition(ArcView v){
+    public void updatePosition(ObjectView v){
         position.x += speed.x;
         position.y += speed.y;
         angle += speed.x;
@@ -93,4 +116,16 @@ public class Arc implements Drawable{
         speed.y = ySpeed;
     }
 
+    public int getheadX(){
+        return (int)headX;
+    }
+    public int getheadY(){
+        return (int)headY;
+    }
+    public int bitWidth(){
+        return  b.getWidth();
+    }
+    public int bitHeight(){
+        return  b.getHeight();
+    }
 }

@@ -32,7 +32,7 @@ public abstract class DrawableObject implements Drawable{
         position.x = x;
         position.y = y;
     }
-    public void updatePosition(ArcView v){
+    public void updatePosition(ObjectView v){
         // setSpeed(speed.x,speed.y);
         position.x = Math.abs((position.x +speed.x)%mScrWidth);
         position.y =Math.abs((position.y+ speed.y)%mScrHeight);

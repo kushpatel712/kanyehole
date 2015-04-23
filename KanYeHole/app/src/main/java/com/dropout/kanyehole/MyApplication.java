@@ -18,4 +18,7 @@ public class MyApplication extends Application {
     public static Context getAppContext() {
         return MyApplication.context;
     }
+    public static void setContext(Context c){
+        context=c;
+    }
 }

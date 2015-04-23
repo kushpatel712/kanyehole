@@ -3,7 +3,9 @@ package com.dropout.kanyehole;
 /**
  * Created by Kush on 3/14/2015.
  */
+import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,7 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class GameActivity extends ActionBarActivity {
+public class GameActivity extends Activity {
 
     private Arc kanyeArc = null;
     private Object mPauseLock=new Object();
@@ -39,14 +41,15 @@ public class GameActivity extends ActionBarActivity {
     int scores = 0;
     int hits=0;
     int mScrWidth, mScrHeight;
-
-
+    public int score = 0;
+    public int lives = 3;
+    MediaPlayer music;
 
 
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE); //hide title bar
+        //requestWindowFeature(Window.FEATURE_NO_TITLE); //hide title bar
         getWindow().setFlags(0xFFFFFFFF,
                 LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
@@ -55,7 +58,8 @@ public class GameActivity extends ActionBarActivity {
         MyApplication.setContext(this.getBaseContext());
         //create pointer to main screen
        // final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
-
+        music = MediaPlayer.create(MyApplication.getAppContext(),R.raw.song1);
+        music.start();
         //get screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
         mScrWidth = display.getWidth();
@@ -69,9 +73,39 @@ public class GameActivity extends ActionBarActivity {
 
 
         arcView = new ObjectView(this, mScrWidth / 2, kanyeArc.getYPosition(), 50, 0, 0);
-        arcView.registerObject(kanyeArc);
-        ObstacleGenerator obsGen = new ObstacleGenerator();
-        obsGen.generate(arcView,mScrWidth,mScrHeight);
+        arcView.registerDrawable(kanyeArc);
+
+        //// NEED TO USE ACTUAL IMAGE BUTTONS
+        Arrow rbutton = new Arrow(90,mScrWidth, mScrHeight);
+        rbutton.setSpeed(0,0);
+        Arrow lbutton = new Arrow(270,mScrWidth, mScrHeight);
+        lbutton.setSpeed(0,0);
+        Arrow ubutton = new Arrow(0,mScrWidth, mScrHeight);
+        ubutton.setSpeed(0,0);
+        Arrow dbutton = new Arrow(180,mScrWidth, mScrHeight);
+        dbutton.setSpeed(0,0);
+        System.out.println("Screen xy: " + mScrWidth + " " + mScrHeight);
+        rbutton.setXPosition((float) (mScrWidth * 3.0 / 4));
+        System.out.println("rightbutton xy: " + (mScrWidth * 3.0 / 4) + " " + (mScrHeight * 4.75 / 6));
+        rbutton.setYPosition((float) (mScrHeight * 4.75 / 6));
+        lbutton.setXPosition((float) (mScrWidth * 0.0 / 4));
+        System.out.println("leftbutton x: " + (mScrWidth * 0.0 / 4));
+        lbutton.setYPosition((float) (mScrHeight * 4.75 / 6));
+        ubutton.setXPosition((float)(mScrWidth*2.0/4));
+        System.out.println("upbutton x: "+(mScrWidth*2.0/4));
+        ubutton.setYPosition((float)(mScrHeight* 4.75/6));
+        dbutton.setXPosition((float)(mScrWidth*1.0/4));
+        System.out.println("downbutton x: "+(mScrWidth*1.0/4));
+        dbutton.setYPosition((float)(mScrHeight* 4.75/6));
+        arcView.registerDrawable(rbutton);
+        arcView.registerDrawable(lbutton);
+        arcView.registerDrawable(ubutton);
+        arcView.registerDrawable(dbutton);
+
+        ////
+
+        //ObstacleGenerator obsGen = new ObstacleGenerator();
+        //obsGen.generate(arcView,mScrWidth,mScrHeight);
         final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
 
         mainView.addView(arcView); //add ball to main screen
@@ -121,6 +155,7 @@ public class GameActivity extends ActionBarActivity {
         mTmr = null;
         mTsk = null;
         super.onPause();
+        music.release();
     }
 
     @Override
@@ -136,6 +171,10 @@ public class GameActivity extends ActionBarActivity {
                 if (System.currentTimeMillis()%200==199){
                     ObstacleGenerator obsGen = new ObstacleGenerator();
                     obsGen.generate(arcView, mScrWidth, mScrHeight);
+                }
+                if (System.currentTimeMillis()%200==99){
+                    ArrowGenerator arrGen = new ArrowGenerator();
+                    arrGen.generate(arcView, mScrWidth, mScrHeight);
                 }
                     //circle.updatePosition(arcView);
                     RedrawHandler.post(new Runnable() {

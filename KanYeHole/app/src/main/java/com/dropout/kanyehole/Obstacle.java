@@ -1,5 +1,8 @@
 package com.dropout.kanyehole;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,6 +24,11 @@ public class Obstacle implements Drawable{
     public boolean outside = false;
     public boolean touch = false;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    Context context=MyApplication.getAppContext();
+    Bitmap b= BitmapFactory.decodeResource(context.getResources(), R.drawable.tswift);
+    Bitmap bred= BitmapFactory.decodeResource(context.getResources(), R.drawable.tswiftred);
+    Bitmap bcyan= BitmapFactory.decodeResource(context.getResources(), R.drawable.tswiftcyan);
+    private boolean flash = false;
     public void draw(Canvas canvas, int height, int width){
         paint.setColor(Color.GREEN);
 
@@ -28,11 +36,17 @@ public class Obstacle implements Drawable{
         int yyyy = (int)position.y;
         int xxxx = (int)position.x;
         //System.out.println("x"+xxxx+" y"+yyyy);
-        paint.setColor(Color.RED);
+
         if(touch){
-            paint.setColor(Color.BLUE);
+            if (flash)
+                canvas.drawBitmap(bcyan, xxxx - this.bitWidth()/2, yyyy - this.bitHeight()/2, paint);
+            else
+                canvas.drawBitmap(bred, xxxx - this.bitWidth()/2, yyyy - this.bitHeight()/2, paint);
+            flash = !flash;
+        }else if (!touch) {
+            canvas.drawBitmap(b, xxxx - this.bitWidth()/2, yyyy - this.bitHeight()/2, paint);
         }
-        canvas.drawCircle(xxxx,yyyy,8,paint);
+        //canvas.drawCircle(xxxx,yyyy,8,paint);
     }
     public Obstacle(int startAngle, int mScrWidth, int mScrHeight){
         position = new android.graphics.PointF();
@@ -43,6 +57,8 @@ public class Obstacle implements Drawable{
         position.y=mScrHeight/4;
         speed.x = (float) (Math.sin(startAngle));
         speed.y = (float)(Math.cos(startAngle));
+        speed.x*=4;
+        speed.y*=4;
         angle=startAngle;
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
@@ -58,6 +74,19 @@ public class Obstacle implements Drawable{
         position.x = x;
         position.y = y;
     }
+    private static boolean collided(float x1,float y1, float r1, float x2,float y2, float r2)
+    {
+        float a,dx, dy;
+        a = (r1+r2) * (r1+r2);
+        dx = (float) (x1 - x2);
+        dy = (float) (y1 - y2);
+
+        if (a > (dx*dx) + (dy*dy))
+        {
+            return true;
+        }
+        return false;
+    }
     public void updatePosition(){
        // setSpeed(speed.x,speed.y);
         position.x = Math.abs((position.x +speed.x)%mScrWidth);
@@ -68,21 +97,32 @@ public class Obstacle implements Drawable{
             outside = true;
         }
         Arc arc=Arc.getInstance();
-        Rect KanyeHead=new Rect(arc.getheadX()+1+arc.bitWidth()/10,arc.getheadY()+arc.bitHeight()*2/3-2,arc.getheadX()+arc.bitWidth()*22/30-2,arc.getheadY()+arc.bitHeight()*29/30);
-        Rect KanyeChin=new Rect(arc.getheadX()+1+arc.bitWidth()/10,arc.getheadY()+arc.bitHeight()*2/3-2,arc.getheadX()+arc.bitWidth()*22/30-2,arc.getheadY()+arc.bitHeight()*29/30);
-        Rect object=new Rect((int)position.x-5,(int)position.y-5,(int)position.x+5,(int)position.y+5);
-
-
-        if(object.intersect(KanyeHead)||object.intersect(KanyeChin)){
-            touch=true;
-
+        if (collided(arc.getheadX()+arc.bitWidth()/2,arc.getheadY()+arc.bitHeight()/2,arc.bitWidth()/2,position.x,position.y,this.bitWidth()/2)){
+            touch = true;
         }
+
+//        Rect KanyeHead=new Rect(arc.getheadX()+1,arc.getheadY()+1,arc.getheadX()+arc.bitWidth()*29/30-2,arc.getheadY()+arc.bitHeight()*2/3-2);
+//        Rect KanyeChin=new Rect(arc.getheadX()+1+arc.bitWidth()/10,arc.getheadY()+arc.bitHeight()*2/3-2,arc.getheadX()+arc.bitWidth()*22/30-2,arc.getheadY()+arc.bitHeight()*29/30);
+//        Rect object=new Rect((int)position.x-5,(int)position.y-5,(int)position.x+5,(int)position.y+5);
+//
+//
+////        if(object.intersect(KanyeHead)||object.intersect(KanyeChin)){
+////            touch=true;
+////
+////        }
         if(touch&&count==0){
+
             System.out.println("Collision!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             count++;
         }
         //v.setObjectPosition(position.x, position.y);
         //System.out.println(position.x+" "+position.y);
+    }
+    public int bitWidth(){
+        return  b.getWidth();
+    }
+    public int bitHeight(){
+        return  b.getHeight();
     }
     public float getXPosition(){
         return position.x;
@@ -91,7 +131,7 @@ public class Obstacle implements Drawable{
         return position.y;
     }
     public void setSpeed(float xSpeed, float ySpeed){
-        speed.x = xSpeed+(float) (50 * Math.sin(angle));
+        speed.x = xSpeed+ (float) (50 * Math.sin(angle));
         speed.y = ySpeed+ (float)(50 * Math.cos(angle));
     }
 

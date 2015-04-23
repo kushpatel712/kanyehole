@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
+import android.widget.TextView;
 
 /**
  * Created by Kush on 4/1/2015.
@@ -28,9 +30,9 @@ public class Arc implements Drawable{
     double radius;
     Context context=MyApplication.getAppContext();
     Bitmap b= BitmapFactory.decodeResource(context.getResources(), R.drawable.smallhead);
+    Bitmap logo= BitmapFactory.decodeResource(context.getResources(), R.drawable.gamelogo);
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public void draw(Canvas canvas, int height, int width){
-        paint.setColor(Color.GREEN);
         int yyyy = height/4;
         int xxxx = width/2;
         radius=xxxx*.7;
@@ -45,16 +47,21 @@ public class Arc implements Drawable{
        // canvas.drawBitmap(b,,((float)(mScrHeight / 2 + 50 * Math.sin(angle))));
         //float headX = (float)(xxxx);
         //System.out.println(headX);
-        headX=(float)(xxxx-15 + radius * Math.cos((angs*2*Math.PI/360)));
+        headX=(float)(xxxx-this.bitWidth()/2 + radius * Math.cos((angs*2*Math.PI/360)));
         //float nX=float)(xxxx + 100 * Math.cos((angs)%360));
         //float headX=-(float) (Math.cos(angs)*xxxx*.6);
         //System.out.println("x:" + (xxxx-(xxxx*2/5))+ " headx:"+headX + " angle:" +angle +" sin:"+Math.sin(angle)+" arcang:"+((angs-30)%360));
-        headY=((float)(yyyy-15 + radius * Math.sin((angs*2*Math.PI/360))));
+        headY=((float)(yyyy-this.bitHeight()/2 + radius * Math.sin((angs*2*Math.PI/360))));
         //float headY=-(float) (Math.sin(angs)*yyyy*.6);
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.MAGENTA);
+        canvas.drawCircle((float)xxxx,(float)yyyy,(float)radius,paint);
         canvas.drawBitmap(b,headX,headY,paint);
-        canvas.drawRect(new Rect(getheadX()+1,getheadY()+1,getheadX()+bitWidth()*29/30-2,getheadY()+bitHeight()*2/3-2),paint);
+        canvas.drawBitmap(logo,(float)xxxx-logo.getWidth()/2,(float)yyyy-logo.getHeight()/2,paint);
+        //canvas.drawRect(new Rect(getheadX()+1,getheadY()+1,getheadX()+bitWidth()*29/30-2,getheadY()+bitHeight()*2/3-2),paint);
         paint.setColor(Color.GRAY);
-        canvas.drawRect(new Rect(getheadX()+1+bitWidth()/10,getheadY()+bitHeight()*2/3-2,getheadX()+bitWidth()*22/30-2,getheadY()+bitHeight()*29/30),paint);
+        //canvas.drawRect(new Rect(getheadX()+1+bitWidth()/10,getheadY()+bitHeight()*2/3-2,getheadX()+bitWidth()*22/30-2,getheadY()+bitHeight()*29/30),paint);
 
 
         //System.out.println("Drawing head at x crd: "+ headX);

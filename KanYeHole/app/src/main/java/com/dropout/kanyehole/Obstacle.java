@@ -68,8 +68,8 @@ public class Obstacle implements Drawable{
             outside = true;
         }
         Arc arc=Arc.getInstance();
-        Rect KanyeHead=new Rect(arc.getheadX()+1,arc.getheadY()+1,(arc.getheadX()+arc.bitWidth())*29/30-2,(arc.getheadY()+arc.bitHeight())*2/3-2);
-        Rect KanyeChin=new Rect(arc.getheadX()+1+arc.bitWidth()/10,(arc.getheadY()+arc.bitHeight())*2/3-2,(arc.getheadX()+arc.bitWidth())*22/30-2,(arc.getheadY()+arc.bitHeight()*29/30));
+        Rect KanyeHead=new Rect(arc.getheadX()+1+arc.bitWidth()/10,arc.getheadY()+arc.bitHeight()*2/3-2,arc.getheadX()+arc.bitWidth()*22/30-2,arc.getheadY()+arc.bitHeight()*29/30);
+        Rect KanyeChin=new Rect(arc.getheadX()+1+arc.bitWidth()/10,arc.getheadY()+arc.bitHeight()*2/3-2,arc.getheadX()+arc.bitWidth()*22/30-2,arc.getheadY()+arc.bitHeight()*29/30);
         Rect object=new Rect((int)position.x-5,(int)position.y-5,(int)position.x+5,(int)position.y+5);
 
 

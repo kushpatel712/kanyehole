@@ -52,9 +52,9 @@ public class Arc implements Drawable{
         headY=((float)(yyyy-15 + radius * Math.sin((angs*2*Math.PI/360))));
         //float headY=-(float) (Math.sin(angs)*yyyy*.6);
         canvas.drawBitmap(b,headX,headY,paint);
-        canvas.drawRect(new Rect(getheadX()+1,getheadY()+1,(getheadX()+bitWidth())*29/30-2,getheadY()+bitHeight()*2/3-2),paint);
+        canvas.drawRect(new Rect(getheadX()+1,getheadY()+1,getheadX()+bitWidth()*29/30-2,getheadY()+bitHeight()*2/3-2),paint);
         paint.setColor(Color.GRAY);
-        canvas.drawRect(new Rect(getheadX()+1+bitWidth()/10,(getheadY()+bitHeight())*2/3-2,(getheadX()+bitWidth())*22/30-2,(getheadY()+bitHeight()*29/30)),paint);
+        canvas.drawRect(new Rect(getheadX()+1+bitWidth()/10,getheadY()+bitHeight()*2/3-2,getheadX()+bitWidth()*22/30-2,getheadY()+bitHeight()*29/30),paint);
 
 
         //System.out.println("Drawing head at x crd: "+ headX);

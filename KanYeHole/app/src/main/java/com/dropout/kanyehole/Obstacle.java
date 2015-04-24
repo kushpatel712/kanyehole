@@ -54,11 +54,11 @@ public class Obstacle implements Drawable{
         //position.x = mScrWidth/2+(float)Math.random()*(mScrWidth/2);
        // position.y = mScrHeight/4+(float)Math.random()*(mScrHeight/4);
         position.x=mScrWidth/2;
-        position.y=mScrHeight/4;
+        position.y=mScrHeight/4+mScrHeight/12;
         speed.x = (float) (Math.sin(startAngle));
         speed.y = (float)(Math.cos(startAngle));
-        speed.x*=4;
-        speed.y*=4;
+        speed.x*=6;
+        speed.y*=6;
         angle=startAngle;
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
@@ -91,7 +91,7 @@ public class Obstacle implements Drawable{
        // setSpeed(speed.x,speed.y);
         position.x = Math.abs((position.x +speed.x)%mScrWidth);
         position.y =Math.abs((position.y+ speed.y)%mScrHeight);
-        double distance = Math.sqrt(Math.pow(position.x-mScrWidth/2,2)+Math.pow(position.y-mScrHeight/4,2));
+        double distance = Math.sqrt(Math.pow(position.x-mScrWidth/2,2)+Math.pow(position.y-mScrHeight/4-mScrHeight/12,2));
         //System.out.println("dist"+distance+" rad"+(mScrWidth/4+21));
         if (distance > mScrWidth/2*.8+21){
             outside = true;

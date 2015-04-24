@@ -58,7 +58,7 @@ public class GameActivity extends Activity {
         MyApplication.setContext(this.getBaseContext());
         //create pointer to main screen
        // final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
-        music = MediaPlayer.create(MyApplication.getAppContext(),R.raw.song1);
+        music = MediaPlayer.create(MyApplication.getAppContext(),R.raw.ybm);
         music.start();
         //get screen dimensions
         Display display = getWindowManager().getDefaultDisplay();

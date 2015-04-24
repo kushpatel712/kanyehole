@@ -26,7 +26,7 @@ public class ObjectView extends View {
     private double angle;
     private int xx;
     private int yy;
-    Bitmap b= BitmapFactory.decodeResource(getResources(), R.drawable.kanyeheadpng);
+   // Bitmap b= BitmapFactory.decodeResource(getResources(), R.drawable.kanyeheadpng);
     Paint p =new Paint();
     int length=getResources().getDisplayMetrics().widthPixels;
     int height=getResources().getDisplayMetrics().heightPixels;

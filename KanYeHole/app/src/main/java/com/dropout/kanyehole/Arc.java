@@ -33,7 +33,7 @@ public class Arc implements Drawable{
     Bitmap logo= BitmapFactory.decodeResource(context.getResources(), R.drawable.gamelogo);
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public void draw(Canvas canvas, int height, int width){
-        int yyyy = height/4;
+        int yyyy = height/4+height/12;
         int xxxx = width/2;
         radius=xxxx*.7;
         RectF hi=new RectF(xxxx-xxxx/5,yyyy-xxxx/5,yyyy+xxxx/5,yyyy-+xxxx/5);

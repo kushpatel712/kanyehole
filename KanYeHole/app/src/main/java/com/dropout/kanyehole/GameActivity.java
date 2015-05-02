@@ -5,6 +5,10 @@ package com.dropout.kanyehole;
  */
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,8 +19,10 @@ import android.view.MenuItem;//
 import android.os.Handler;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,6 +30,9 @@ import android.hardware.SensorManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.hardware.SensorEventListener;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,6 +42,7 @@ public class GameActivity extends Activity {
     private Arc kanyeArc = null;
     private Object mPauseLock=new Object();
     private Obstacle circle=null;
+    public FrameLayout mainView;
     private ObjectView arcView = null;
     public boolean notPaused=true;
     Handler RedrawHandler = new Handler(); //so redraw occurs in main thread
@@ -44,7 +54,9 @@ public class GameActivity extends Activity {
     public int score = 0;
     public int lives = 3;
     MediaPlayer music;
-
+    Bitmap b;
+    Bitmap bred;
+    Bitmap bcyan;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -55,10 +67,12 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         setContentView(R.layout.game_layout);
+
         MyApplication.setContext(this.getBaseContext());
         //create pointer to main screen
        // final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
-        music = MediaPlayer.create(MyApplication.getAppContext(),R.raw.ybm);
+
+        music = MediaPlayer.create(MyApplication.getAppContext(),R.raw.nipmono);
         music.start();
         //get screen dimensions
         Display display = getWindowManager().getDefaultDisplay();
@@ -66,11 +80,19 @@ public class GameActivity extends Activity {
         mScrHeight = display.getHeight();
         kanyeArc = Arc.getInstance();
         kanyeArc.setPosition(mScrWidth, mScrHeight);
+        Bitmap pic= BitmapFactory.decodeResource(getResources(), R.drawable.smallhead);
+        Bitmap logo= BitmapFactory.decodeResource(getResources(), R.drawable.gamelogo);
+        kanyeArc.setPicture(pic);
+        kanyeArc.setLogo(logo);
+        kanyeArc.setArcColor(Color.MAGENTA);
+        b= BitmapFactory.decodeResource(getResources(), R.drawable.tswift);
+        bred= BitmapFactory.decodeResource(getResources(), R.drawable.tswiftred);
+        bcyan= BitmapFactory.decodeResource(getResources(), R.drawable.tswiftcyan);
         //circle= new Obstacle(10,mScrWidth,mScrHeight);
 
 
         //create variables for ball position and speed
-
+      //-------------------------------------------------------  initializeButtonCoordinates();
 
         arcView = new ObjectView(this, mScrWidth / 2, kanyeArc.getYPosition(), 50, 0, 0);
         arcView.registerDrawable(kanyeArc);
@@ -97,19 +119,31 @@ public class GameActivity extends Activity {
         dbutton.setXPosition((float)(mScrWidth*1.0/4));
         System.out.println("downbutton x: "+(mScrWidth*1.0/4));
         dbutton.setYPosition((float)(mScrHeight* 4.75/6));
+       //------------------------------------------------------- initializeButtonCoordinates();
         arcView.registerDrawable(rbutton);
         arcView.registerDrawable(lbutton);
         arcView.registerDrawable(ubutton);
         arcView.registerDrawable(dbutton);
+       //----------------------------------------------- initializeButtonCoordinates();
 
         ////
 
         //ObstacleGenerator obsGen = new ObstacleGenerator();
         //obsGen.generate(arcView,mScrWidth,mScrHeight);
-        final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
-
+        mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
+        initializeButtonCoordinates();
         mainView.addView(arcView); //add ball to main screen
+        mainView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            public void onGlobalLayout() {
+
+                initializeButtonCoordinates()  ;
+
+            }
+        });
+       //-------------------------------------- initializeButtonCoordinates();
         arcView.invalidate(); //call onDraw in BallView
+        //----------------------------------------initializeButtonCoordinates();
         //listener for accelerometer, use anonymous class for simplicity
         ((SensorManager) getSystemService(Context.SENSOR_SERVICE)).registerListener(
                         new SensorEventListener() {
@@ -158,9 +192,11 @@ public class GameActivity extends Activity {
         music.release();
     }
 
+
     @Override
     public void onResume() //app moved to foreground (also occurs at app startup)
     {
+        //initializeButtonCoordinates();
         //create timer to move ball to new position
         mTmr = new Timer();
         long time=System.currentTimeMillis();
@@ -170,9 +206,9 @@ public class GameActivity extends Activity {
                     kanyeArc.updatePosition(arcView);
                 if (System.currentTimeMillis()%200==199){
                     ObstacleGenerator obsGen = new ObstacleGenerator();
-                    obsGen.generate(arcView, mScrWidth, mScrHeight);
+                    obsGen.generate(arcView, mScrWidth, mScrHeight, b, bred, bcyan);
                 }
-                if (System.currentTimeMillis()%200==99){
+                if (System.currentTimeMillis()%583==582){
                     ArrowGenerator arrGen = new ArrowGenerator();
                     arrGen.generate(arcView, mScrWidth, mScrHeight);
                 }
@@ -222,6 +258,109 @@ public class GameActivity extends Activity {
         else notPaused=true;
 
 
+    }
+    public void initializeButtonCoordinates(){
+        //View.addOnGlobalLayoutListener(ViewTreeObserver.OnGlobalLayoutListener listener);
+     Bitmap b = BitmapFactory.decodeResource(MyApplication.getAppContext().getResources(), R.drawable.arrowup);
+     final ImageButton left = (ImageButton) mainView.findViewById(R.id.left);
+     final ImageButton down = (ImageButton) mainView.findViewById(R.id.down);
+     final ImageButton up = (ImageButton) mainView.findViewById(R.id.up);
+     final ImageButton right = (ImageButton) mainView.findViewById(R.id.right);
+        System.out.println("fdg: "+up.getLeft()+" Width/height:"+mScrWidth+"/"+mScrHeight);
+        left.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+       /* left.setLeft(mScrWidth/8);
+        down.setLeft((mScrWidth*3)/8);
+        up.setLeft((mScrWidth*5)/8);
+        right.setLeft((mScrWidth*7)/8);*/
+        System.out.print("Size: "+b.getWidth());
+       // while(down.getY()==0.0){System.out.println("Watingin");}
+        Buttons.standard_Y= (int)left.getY();
+        Buttons.left_X= (int)left.getX();
+        Buttons.down_X= (int)down.getX()+down.getWidth()-b.getWidth();
+        Buttons.up_X= (int)up.getX();
+        Buttons.right_X= (int)right.getX();
+        Buttons.arrow_width=left.getWidth();
+        Buttons.arrow_height=left.getHeight();
+        Buttons.leftRect=new Rect(Buttons.left_X-5,Buttons.standard_Y-5,Buttons.left_X+b.getWidth()+5,Buttons.standard_Y+b.getHeight()+5);
+        Buttons.upRect=new Rect(Buttons.up_X-5,Buttons.standard_Y-5,Buttons.up_X+b.getWidth()+5,Buttons.standard_Y+b.getHeight()+5);
+        Buttons.downRect=new Rect(Buttons.down_X-5,Buttons.standard_Y-5,Buttons.down_X+b.getWidth()+5,Buttons.standard_Y+b.getHeight()+5);
+        Buttons.rightRect=new Rect(Buttons.right_X-5,Buttons.standard_Y-5,Buttons.right_X+b.getWidth()+5,Buttons.standard_Y+b.getHeight()+5);
+        System.out.println("Left:"+Buttons.left_X+" "+"Down:"+Buttons.down_X+" "+"Up:"+Buttons.up_X+" "+"Right:"+Buttons.right_X+" ");
+        System.out.println("Actual Left:"+left.getX()+" "+"Down:"+down.getX()+" "+"Up:"+up.getX()+" "+"Right:"+right.getLeft()+" ");
+
+    }
+    public void onWindowFocusChanged(){
+        System.out.println("Window");
+       // initializeButtonCoordinates();
+    }
+
+    public void upPressed(View view){
+        for(int i=0;i<Buttons.upArrows.size();i++){
+            if(Buttons.upRect.contains(Buttons.upArrows.get(i).getArrowRectangle())){
+                System.out.println("perfect");
+                Buttons.upArrows.remove(i);
+                return;
+
+            }
+            else if(Buttons.upRect.intersect(Buttons.upArrows.get(i).getArrowRectangle())) {
+                System.out.println("good");
+                Buttons.upArrows.remove(i);
+                return;
+            }
+            else
+            System.out.println("miss");
+        }
+    }
+    public void rightPressed(View view){
+        for(int i=0;i<Buttons.rightArrows.size();i++){
+            if(Buttons.rightRect.contains(Buttons.rightArrows.get(i).getArrowRectangle())){
+                System.out.println("perfect");
+                Buttons.rightArrows.remove(i);
+                return;
+
+            }
+            else if(Buttons.rightRect.intersect(Buttons.rightArrows.get(i).getArrowRectangle())) {
+                System.out.println("good");
+                Buttons.rightArrows.remove(i);
+                return;
+            }
+            else
+                System.out.println("miss");
+        }
+    }
+    public void downPressed(View view){
+        for(int i=0;i<Buttons.downArrows.size();i++){
+            if(Buttons.downRect.contains(Buttons.downArrows.get(i).getArrowRectangle())){
+                System.out.println("perfect");
+                Buttons.downArrows.remove(i);
+                return;
+
+            }
+            else if(Buttons.downRect.intersect(Buttons.downArrows.get(i).getArrowRectangle())) {
+                System.out.println("good");
+                Buttons.downArrows.remove(i);
+                return;
+            }
+            else
+            System.out.println("miss");
+        }
+    }
+    public void leftPressed(View view){
+        for(int i=0;i<Buttons.leftArrows.size();i++){
+            if(Buttons.leftRect.contains(Buttons.leftArrows.get(i).getArrowRectangle())){
+                System.out.println("perfect");
+                Buttons.leftArrows.remove(i);
+                return;
+
+            }
+            else if(Buttons.leftRect.intersect(Buttons.leftArrows.get(i).getArrowRectangle())) {
+                System.out.println("good");
+                Buttons.leftArrows.remove(i);
+                return;
+            }
+            else
+            System.out.println("miss");
+        }
     }
 }
 

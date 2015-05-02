@@ -40,6 +40,14 @@
            android:layout_above="@+id/leaderboard"
            android:layout_margin="5dp"
            android:onClick="sendPlay"/>
-
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:id="@+id/vma"
+        android:layout_height="wrap_content"
+        android:src="@drawable/vma"
+        android:background="#00000000"
+        android:layout_below="@+id/settings"
+        android:layout_margin="10dp"
+        android:onClick="sendTay"/>
 
 </RelativeLayout>

@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.Display;
+import android.widget.Button;
 
 /**
  * Created by Kush on 4/1/2015
@@ -20,12 +21,15 @@ public class Arrow implements Drawable{
     android.graphics.PointF position, speed;
     double angle = 0;
     int count=0;
+    boolean added=false;
     int mScrWidth, mScrHeight;
     public boolean outside = false;
     public boolean touch = false;
+    public boolean perfect = false;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     Context context=MyApplication.getAppContext();
     Bitmap b = BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowup);
+    Bitmap perf = BitmapFactory.decodeResource(context.getResources(), R.drawable.perfect);
     public void draw(Canvas canvas, int height, int width){
         paint.setColor(Color.GREEN);
 
@@ -54,9 +58,13 @@ public class Arrow implements Drawable{
         else if (angle == 270){
             b = left;
         }
-        float X=(float)(xxxx+this.bitWidth()/4);
-        float Y=(float)(yyyy+this.bitHeight()/4);
+        float X=(float)(xxxx);
+        float Y=(float)(yyyy);
         canvas.drawBitmap(b,X,Y,paint);
+        if (perfect){
+            //System.out.println("Perf");
+            canvas.drawBitmap(perf,xxxx,Y+perf.getHeight()/2,paint);
+        }
     }
     public Arrow(int startAngle, int mScrWidth, int mScrHeight){
         position = new android.graphics.PointF();
@@ -69,22 +77,22 @@ public class Arrow implements Drawable{
        // speed.y = (float)(Math.cos(startAngle));
         angle=startAngle;
         if (angle == 0){
-            position.x=(float) (mScrWidth*2.0/4);
+            position.x=Buttons.up_X;
             position.y=mScrHeight/2;
         }
         else if (angle == 90){
-            position.x=(float) (mScrWidth*3.0/4);
+            position.x=Buttons.right_X;
             position.y=mScrHeight/2;
         }
         else if (angle == 180){
-            position.x=(float) (mScrWidth*1.0/4);
+            position.x=Buttons.down_X;
             position.y=mScrHeight/2;
         }
         else if (angle == 270){
-            position.x=(float) (mScrWidth*0.0/4);
+            position.x=Buttons.left_X;
             position.y=mScrHeight/2;
         }
-        this.setSpeed(0,10);
+        this.setSpeed(0,5);
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
     }
@@ -105,25 +113,22 @@ public class Arrow implements Drawable{
         position.y =Math.abs((position.y+ speed.y)%mScrHeight);
         //double distance = Math.sqrt(Math.pow(position.x-mScrWidth/2,2)+Math.pow(position.y-mScrHeight/4,2));
         //System.out.println("dist"+distance+" rad"+(mScrWidth/4+21));
+        if (position.y == Buttons.standard_Y){
+            perfect = true;
+
+        }
+        if((!this.added)&&(position.y>=mScrHeight*3/4)){
+
+            addArrow();
+            this.added=true;
+            System.out.println("added");
+        }
         if (position.y > mScrHeight*5.75/6){
             outside = true;
-        }
-        Arc arc=Arc.getInstance();
-        Rect KanyeHead=new Rect(arc.getheadX()+1,arc.getheadY()+1,arc.getheadX()+arc.bitWidth()*29/30-2,arc.getheadY()+arc.bitHeight()*2/3-2);
-        Rect KanyeChin=new Rect(arc.getheadX()+1+arc.bitWidth()/10,arc.getheadY()+arc.bitHeight()*2/3-2,arc.getheadX()+arc.bitWidth()*22/30-2,arc.getheadY()+arc.bitHeight()*29/30);
-        Rect object=new Rect((int)position.x-5,(int)position.y-5,(int)position.x+5,(int)position.y+5);
-
-
-        if(object.intersect(KanyeHead)||object.intersect(KanyeChin)){
-            touch=true;
+            perfect = false;
+            this.remove();
 
         }
-        if(touch&&count==0){
-            System.out.println("Collision!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            count++;
-        }
-        //v.setObjectPosition(position.x, position.y);
-        //System.out.println(position.x+" "+position.y);
     }
     public float getXPosition(){
         return position.x;
@@ -149,7 +154,59 @@ public class Arrow implements Drawable{
     public float getObjectYPosition(){
         return this.position.y;
     }
+    public Rect getArrowRectangle(){
+        Rect rectangle=new Rect((int) this.getObjectXPosition(),(int) this.getObjectYPosition(),(int)this.getObjectXPosition()+b.getWidth(),(int)this.getObjectYPosition()+b.getHeight());
+        return rectangle;
+    }
+
+    public void remove(){
+        try {
+            if (angle == 0) {
+                Buttons.upArrows.remove(this);
+                this.b.recycle();
+                this.perf.recycle();
+            } else if (angle == 90) {
+                Buttons.rightArrows.remove(this);
+                this.b.recycle();
+                this.perf.recycle();
+            } else if (angle == 180) {
+                Buttons.downArrows.remove(this);
+                this.b.recycle();
+                this.perf.recycle();
+            } else if (angle == 270) {
+                Buttons.leftArrows.remove(this);
+                this.b.recycle();
+                this.perf.recycle();
+
+            }
+        }
+        catch(NullPointerException n){
+
+        }
 
 
+    }
+    public void addArrow(){
+        try {
+            if (angle == 0) {
+                Buttons.upArrows.add(this);
+
+            } else if (angle == 90) {
+                Buttons.rightArrows.add(this);
+
+            } else if (angle == 180) {
+                Buttons.downArrows.add(this);
+            } else if (angle == 270) {
+                Buttons.leftArrows.add(this);
+
+
+            }
+        }
+        catch(NullPointerException n){
+
+        }
+
+
+    }
 
 }

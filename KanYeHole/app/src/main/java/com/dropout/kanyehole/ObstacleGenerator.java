@@ -1,12 +1,14 @@
 package com.dropout.kanyehole;
 
+import android.graphics.Bitmap;
+
 public class ObstacleGenerator {
     private static final String colors[] = { "Red", "Green", "Blue", "Purple", "Black" };
 
-    public void generate(ObjectView drawer,int mScrWidth, int mScrHeight){
+    public void generate(ObjectView drawer,int mScrWidth, int mScrHeight, Bitmap b, Bitmap red, Bitmap cyan){
         for(int i=0; i < 2; i++) {
             //System.out.println("Object: "+ i);
-            Obstacle obstacle = (Obstacle)ObstacleFactory.getObstacle(getRandomColor(),mScrWidth, mScrHeight);
+            Obstacle obstacle = (Obstacle)ObstacleFactory.getObstacle(getRandomColor(),mScrWidth, mScrHeight, b, red, cyan);
             if (drawer.getObsSize() < 10) {
                 drawer.registerObstacle(obstacle);
             }

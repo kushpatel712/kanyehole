@@ -27,6 +27,7 @@ public class Arc implements Drawable{
     float headX;
     float headY;
     int mScrWidth, mScrHeight;
+    int color = 0;
     double radius;
     Context context=MyApplication.getAppContext();
     Bitmap b= BitmapFactory.decodeResource(context.getResources(), R.drawable.smallhead);
@@ -55,7 +56,7 @@ public class Arc implements Drawable{
         //float headY=-(float) (Math.sin(angs)*yyyy*.6);
 
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.MAGENTA);
+        paint.setColor(color);
         canvas.drawCircle((float)xxxx,(float)yyyy,(float)radius,paint);
         canvas.drawBitmap(b,headX,headY,paint);
         canvas.drawBitmap(logo,(float)xxxx-logo.getWidth()/2,(float)yyyy-logo.getHeight()/2,paint);
@@ -84,6 +85,15 @@ public class Arc implements Drawable{
         return instance;
     }
 
+    public void setPicture(Bitmap pic){
+        b = pic;
+    }
+    public void setLogo(Bitmap pic){
+        logo = pic;
+    }
+    public void setArcColor(int col){
+        this.color = col;
+    }
     public void setXPosition(float x){
         position.x = x;
     }

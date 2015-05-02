@@ -28,6 +28,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dropout.kanyehole.MenuActivity"/>
         </activity>
+        <activity
+            android:name="com.dropout.kanyehole.TayActivity"
+            android:label="Tay"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:parentActivityName="com.dropout.kanyehole.MenuActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dropout.kanyehole.MenuActivity"/>
+        </activity>
     </application>
 
 </manifest>

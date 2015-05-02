@@ -48,7 +48,7 @@ public class Obstacle implements Drawable{
         }
         //canvas.drawCircle(xxxx,yyyy,8,paint);
     }
-    public Obstacle(int startAngle, int mScrWidth, int mScrHeight){
+    public Obstacle(int startAngle, int mScrWidth, int mScrHeight, Bitmap pic, Bitmap red, Bitmap cyan){
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();
         //position.x = mScrWidth/2+(float)Math.random()*(mScrWidth/2);
@@ -57,13 +57,15 @@ public class Obstacle implements Drawable{
         position.y=mScrHeight/4+mScrHeight/12;
         speed.x = (float) (Math.sin(startAngle));
         speed.y = (float)(Math.cos(startAngle));
-        speed.x*=6;
-        speed.y*=6;
+        speed.x*=10;
+        speed.y*=10;
         angle=startAngle;
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
+        b = pic;
+        bred = red;
+        bcyan = cyan;
     }
-
     public void setXPosition(float x){
         position.x = x;
     }
@@ -112,7 +114,7 @@ public class Obstacle implements Drawable{
 ////        }
         if(touch&&count==0){
 
-            System.out.println("Collision!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            //System.out.println("Collision!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             count++;
         }
         //v.setObjectPosition(position.x, position.y);

@@ -45,4 +45,8 @@ public class MenuActivity extends Activity {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
     }
+    public void sendTay(View view){
+        Intent intent = new Intent(this, TayActivity.class);
+        startActivity(intent);
+    }
 }

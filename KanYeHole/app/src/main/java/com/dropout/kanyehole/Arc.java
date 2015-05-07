@@ -23,7 +23,7 @@ public class Arc implements Drawable{
     //}
     private static Arc instance = new Arc(0,0);
     android.graphics.PointF position, speed;
-    double angle = 0;
+    double angle = 90;
     float headX;
     float headY;
     int mScrWidth, mScrHeight;
@@ -77,7 +77,9 @@ public class Arc implements Drawable{
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
     }
-
+    public static void deleteInstance(){
+        instance = null;
+    }
     public static Arc getInstance()
     {
         if(instance == null)
@@ -104,16 +106,25 @@ public class Arc implements Drawable{
         position.x = x;
         position.y = y;
     }
-    public void updatePosition(ObjectView v){
-        position.x += speed.x;
-        position.y += speed.y;
+    public synchronized boolean updatePosition(){
         angle += speed.x;
-        float newX = (float) (mScrWidth / 2 + 50 * Math.sin(angle));
-        float newY = (float) (mScrHeight / 4 + 50 * Math.cos(angle));
+        int yyyy = mScrHeight/4+mScrHeight/12;
+        int xxxx = mScrWidth/2;
+        radius=xxxx*.7;
+
+        position.x=(float)(xxxx + radius * Math.cos(((angle+.5f)*2*Math.PI/360)));
+        position.y=((float)(yyyy+ radius * Math.sin(((angle+.5f)*2*Math.PI/360))));
+        return false;
+       // System.out.println("posxy"+(float)(xxxx + radius * Math.cos(((angle+.5f)*2*Math.PI/360)))+" "+xxxx);
+        //System.out.println("ang"+angle);
+        //float newX = (float) (mScrWidth / 2 + 50 * Math.sin(angle));
+        //float newY = (float) (mScrHeight / 4 + 50 * Math.cos(angle));
         //if ball goes off screen, reposition to opposite side of screen
         //update ball class instance
-        v.setPosition(newX,newY);
-        v.setAngle(angle);
+    }
+    public void setScrDims(int height, int width){
+        this.mScrHeight = height;
+        this.mScrWidth = width;
     }
     public float getXPosition(){
         return position.x;

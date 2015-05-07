@@ -10,10 +10,10 @@ import java.util.HashMap;
 public class ObstacleFactory {
     private static final HashMap<String, Drawable> obstacleMap = new HashMap<String, Drawable>();
 
-    public static Drawable getObstacle(String color, int mScrWidth, int mScrHeight, Bitmap b, Bitmap red, Bitmap cyan) {
+    public static Drawable getObstacle(String color, int mScrWidth, int mScrHeight, boolean taymode) {
         Obstacle obstacle = (Obstacle)obstacleMap.get(color);
         int angle = (int)(Math.random()*360);
-        obstacle = new Obstacle(angle, mScrWidth, mScrHeight, b, red, cyan);
+        obstacle = new Obstacle(angle, mScrWidth, mScrHeight, taymode);
 
         obstacleMap.put(color, obstacle);
 //        if(obstacle == null) {

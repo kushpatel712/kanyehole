@@ -1,15 +1,16 @@
-package com.dropout.kanyehole;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.view.Display;
-import android.widget.Button;
+        package com.dropout.kanyehole;
+
+        import android.content.Context;
+        import android.graphics.Bitmap;
+        import android.graphics.BitmapFactory;
+        import android.graphics.Canvas;
+        import android.graphics.Color;
+        import android.graphics.Paint;
+        import android.graphics.Rect;
+        import android.graphics.RectF;
+        import android.view.Display;
+        import android.widget.Button;
 
 /**
  * Created by Kush on 4/1/2015
@@ -26,46 +27,11 @@ public class Arrow implements Drawable{
     public boolean outside = false;
     public boolean touch = false;
     public boolean perfect = false;
+    public boolean miss = true;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     Context context=MyApplication.getAppContext();
     Bitmap b = BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowup);
-    Bitmap perf = BitmapFactory.decodeResource(context.getResources(), R.drawable.perfect);
-    public void draw(Canvas canvas, int height, int width){
-        paint.setColor(Color.GREEN);
 
-        updatePosition();
-        int yyyy = (int)position.y;
-        int xxxx = (int)position.x;
-        //System.out.println("x"+xxxx+" y"+yyyy);
-        paint.setColor(Color.RED);
-        if(touch){
-            paint.setColor(Color.BLUE);
-        }
-        Bitmap up= BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowup);
-        Bitmap down= BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowdown);
-        Bitmap left= BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowleft);
-        Bitmap right= BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowright);
-
-        if (angle == 0){
-            b = up;
-        }
-        else if (angle == 90){
-            b = right;
-        }
-        else if (angle == 180){
-            b = down;
-        }
-        else if (angle == 270){
-            b = left;
-        }
-        float X=(float)(xxxx);
-        float Y=(float)(yyyy);
-        canvas.drawBitmap(b,X,Y,paint);
-        if (perfect){
-            //System.out.println("Perf");
-            canvas.drawBitmap(perf,xxxx,Y+perf.getHeight()/2,paint);
-        }
-    }
     public Arrow(int startAngle, int mScrWidth, int mScrHeight){
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();
@@ -74,7 +40,7 @@ public class Arrow implements Drawable{
         position.x=mScrWidth/2;
         position.y=mScrHeight/4;
         //speed.x = (float) (Math.sin(startAngle));
-       // speed.y = (float)(Math.cos(startAngle));
+        // speed.y = (float)(Math.cos(startAngle));
         angle=startAngle;
         if (angle == 0){
             position.x=Buttons.up_X;
@@ -107,7 +73,7 @@ public class Arrow implements Drawable{
         position.x = x;
         position.y = y;
     }
-    public void updatePosition(){
+    public boolean updatePosition(){
         // setSpeed(speed.x,speed.y);
         //position.x = Math.abs((position.x +speed.x)%mScrWidth);
         position.y =Math.abs((position.y+ speed.y)%mScrHeight);
@@ -127,8 +93,13 @@ public class Arrow implements Drawable{
             outside = true;
             perfect = false;
             this.remove();
+            if (miss){
+                return true;
+            }
+
 
         }
+        return false;
     }
     public float getXPosition(){
         return position.x;
@@ -164,20 +135,15 @@ public class Arrow implements Drawable{
             if (angle == 0) {
                 Buttons.upArrows.remove(this);
                 this.b.recycle();
-                this.perf.recycle();
             } else if (angle == 90) {
                 Buttons.rightArrows.remove(this);
                 this.b.recycle();
-                this.perf.recycle();
             } else if (angle == 180) {
                 Buttons.downArrows.remove(this);
                 this.b.recycle();
-                this.perf.recycle();
             } else if (angle == 270) {
                 Buttons.leftArrows.remove(this);
                 this.b.recycle();
-                this.perf.recycle();
-
             }
         }
         catch(NullPointerException n){

@@ -24,5 +24,6 @@ public class Buttons {
     static public Rect leftRect;
     static public Rect rightRect;
     static public Rect downRect;
+    static public float obsSize;
 
 }

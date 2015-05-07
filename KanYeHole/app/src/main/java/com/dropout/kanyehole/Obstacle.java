@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.Display;
+import android.widget.TextView;
 
 /**
  * Created by Kush on 4/1/2015
@@ -18,53 +19,29 @@ public class Obstacle implements Drawable{
     * TODO: Make me a Flyweight! :D
     * */
     android.graphics.PointF position, speed;
+    private double distfromcenter = 0;
     double angle = 0;
     int count=0;
     int mScrWidth, mScrHeight;
     public boolean outside = false;
     public boolean touch = false;
-    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private boolean taylormode = false;
     Context context=MyApplication.getAppContext();
     Bitmap b= BitmapFactory.decodeResource(context.getResources(), R.drawable.tswift);
-    Bitmap bred= BitmapFactory.decodeResource(context.getResources(), R.drawable.tswiftred);
-    Bitmap bcyan= BitmapFactory.decodeResource(context.getResources(), R.drawable.tswiftcyan);
-    private boolean flash = false;
-    public void draw(Canvas canvas, int height, int width){
-        paint.setColor(Color.GREEN);
-
-        updatePosition();
-        int yyyy = (int)position.y;
-        int xxxx = (int)position.x;
-        //System.out.println("x"+xxxx+" y"+yyyy);
-
-        if(touch){
-            if (flash)
-                canvas.drawBitmap(bcyan, xxxx - this.bitWidth()/2, yyyy - this.bitHeight()/2, paint);
-            else
-                canvas.drawBitmap(bred, xxxx - this.bitWidth()/2, yyyy - this.bitHeight()/2, paint);
-            flash = !flash;
-        }else if (!touch) {
-            canvas.drawBitmap(b, xxxx - this.bitWidth()/2, yyyy - this.bitHeight()/2, paint);
-        }
-        //canvas.drawCircle(xxxx,yyyy,8,paint);
-    }
-    public Obstacle(int startAngle, int mScrWidth, int mScrHeight, Bitmap pic, Bitmap red, Bitmap cyan){
+    public boolean flash = false;
+    public Obstacle(int startAngle, int mScrWidth, int mScrHeight, boolean taymode){
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();
-        //position.x = mScrWidth/2+(float)Math.random()*(mScrWidth/2);
-       // position.y = mScrHeight/4+(float)Math.random()*(mScrHeight/4);
+        taylormode = taymode;
         position.x=mScrWidth/2;
         position.y=mScrHeight/4+mScrHeight/12;
         speed.x = (float) (Math.sin(startAngle));
         speed.y = (float)(Math.cos(startAngle));
-        speed.x*=10;
-        speed.y*=10;
+        speed.x*=2;
+        speed.y*=2;
         angle=startAngle;
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
-        b = pic;
-        bred = red;
-        bcyan = cyan;
     }
     public void setXPosition(float x){
         position.x = x;
@@ -89,20 +66,30 @@ public class Obstacle implements Drawable{
         }
         return false;
     }
-    public void updatePosition(){
+    public synchronized boolean updatePosition(){
        // setSpeed(speed.x,speed.y);
         position.x = Math.abs((position.x +speed.x)%mScrWidth);
         position.y =Math.abs((position.y+ speed.y)%mScrHeight);
         double distance = Math.sqrt(Math.pow(position.x-mScrWidth/2,2)+Math.pow(position.y-mScrHeight/4-mScrHeight/12,2));
+        distfromcenter = distance;
         //System.out.println("dist"+distance+" rad"+(mScrWidth/4+21));
+       // System.out.println(distance);
         if (distance > mScrWidth/2*.8+21){
+         //   System.out.println(distance+"outside");
             outside = true;
-        }
-        Arc arc=Arc.getInstance();
-        if (collided(arc.getheadX()+arc.bitWidth()/2,arc.getheadY()+arc.bitHeight()/2,arc.bitWidth()/2,position.x,position.y,this.bitWidth()/2)){
-            touch = true;
-        }
 
+        }
+        if (taylormode) {
+            TayArc arc = TayArc.getInstance();
+            if (collided(arc.getXPosition(), arc.getYPosition(), Buttons.obsSize / 2, position.x, position.y, Buttons.obsSize / 2)) {
+                touch = true;
+            }
+        } else {
+            Arc arc = Arc.getInstance();
+            if (collided(arc.getXPosition(), arc.getYPosition(), Buttons.obsSize / 2, position.x, position.y, Buttons.obsSize / 2)) {
+                touch = true;
+            }
+        }
 //        Rect KanyeHead=new Rect(arc.getheadX()+1,arc.getheadY()+1,arc.getheadX()+arc.bitWidth()*29/30-2,arc.getheadY()+arc.bitHeight()*2/3-2);
 //        Rect KanyeChin=new Rect(arc.getheadX()+1+arc.bitWidth()/10,arc.getheadY()+arc.bitHeight()*2/3-2,arc.getheadX()+arc.bitWidth()*22/30-2,arc.getheadY()+arc.bitHeight()*29/30);
 //        Rect object=new Rect((int)position.x-5,(int)position.y-5,(int)position.x+5,(int)position.y+5);
@@ -113,12 +100,17 @@ public class Obstacle implements Drawable{
 ////
 ////        }
         if(touch&&count==0){
-
-            //System.out.println("Collision!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            //int livesleft = GameActivity.lives.decrementAndGet();
+           // System.out.println("collision=livesleft:"+livesleft);
             count++;
+            return true;
         }
+        return false;
         //v.setObjectPosition(position.x, position.y);
         //System.out.println(position.x+" "+position.y);
+    }
+    public double getDist(){
+        return  distfromcenter;
     }
     public int bitWidth(){
         return  b.getWidth();

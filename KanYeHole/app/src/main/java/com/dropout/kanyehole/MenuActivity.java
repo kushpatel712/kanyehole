@@ -42,11 +42,21 @@ public class MenuActivity extends Activity {
     }
 
     public void sendPlay(View view){
-        Intent intent = new Intent(this, GameActivity.class);
+        Intent intent = new Intent(this, Customize.class);
         startActivity(intent);
+        finish();
     }
     public void sendTay(View view){
         Intent intent = new Intent(this, TayActivity.class);
+        startActivity(intent);
+    }
+    public void sendCustom(View view){
+        Intent intent = new Intent(this, Customize.class);
+        startActivity(intent);
+        finish();
+    }
+    public void sendLeader(View view){
+        Intent intent = new Intent(this, Leaderboard.class);
         startActivity(intent);
     }
 }

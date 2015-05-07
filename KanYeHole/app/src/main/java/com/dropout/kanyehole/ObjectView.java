@@ -36,6 +36,12 @@ public class ObjectView extends View {
     private ArrayList<Drawable> obsList = new ArrayList<Drawable>();
   //  public RectF hi;
 
+    public ArrayList<Drawable> getDrawList(){
+       return drawList;
+    }
+    public ArrayList<Drawable> getObsList(){
+        return obsList;
+    }
     public void setPosition(float x,float y){
         this.mX = x;
         this.mY = y;
@@ -74,71 +80,6 @@ public class ObjectView extends View {
     }
     public void registerDrawable(Drawable obj){
         drawList.add(obj);
-    }
-    //called by invalidate()	
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        //System.out.println("length of drawables"+drawList.size());
-//        for (Drawable obj: drawList){
-//            obj.draw(canvas,getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
-//        }
-        for (int i = 0; i < drawList.size();i++){
-            // System.out.println("Object: "+ i);
-            Drawable obj = drawList.get(i);
-            if (obj.getClass().equals(Arrow.class)){
-                Arrow arrow = (Arrow)obj;
-                // System.out.println(obs.outside);
-                if (arrow.outside){
-                    drawList.remove(i);
-                    i--;
-                    continue;
-                }
-            }
-            obj.draw(canvas,getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
-        }
-        for (int i = 0; i < obsList.size();i++){
-           // System.out.println("Object: "+ i);
-            Drawable obj = obsList.get(i);
-            if (obj.getClass().equals(Obstacle.class)){
-                Obstacle obs = (Obstacle)obj;
-               // System.out.println(obs.outside);
-                if (obs.outside){
-                    obsList.remove(i);
-                    i--;
-                    continue;
-                }
-            }
-            obj.draw(canvas,getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
-        }
-
-        float newX, newY;
-        double angle=arc.getAngle();
-        if(angle>180){
-            newY=10;
-        }
-        else
-        {
-            newY=-10;
-        }
-        newX = (float) (length / 2 + 70 * Math.sin(angle));
-        newY += (float) (height / 4 + 70 * Math.cos(angle));
-
-        //canvas.drawBitmap(b, (newX+10), (newY+10), p);
-
-//        mPaint.setColor(Color.GREEN);
-//        int yyyy = getResources().getDisplayMetrics().heightPixels/4;
-//        int xxxx = getResources().getDisplayMetrics().widthPixels/2;
-//        RectF hi=new RectF(xxxx-xxxx/5,yyyy-xxxx/5,yyyy+xxxx/5,yyyy-+xxxx/5);
-//        mPaint.setStrokeWidth(10);
-//        float angs= (float)angle;
-//        angs+=0.5f;
-//       canvas.drawArc(new RectF(xxxx-(xxxx*2/5),yyyy-(xxxx*2/5),xxxx+(xxxx*2/5),yyyy+(xxxx*2/5)), (angs-30)%360, 60, false, mPaint);
-//       mPaint.setColor(Color.RED);
-//       //canvas.drawCircle(obX,obY,20,mPaint);
-//        canvas.drawCircle(xxxx/2,yyyy/2,20,mPaint);
-
-      // canvas.drawCircle(x,y,r,mPaint);
     }
     public Context getCont(){return this.c;}
 }

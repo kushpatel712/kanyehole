@@ -6,5 +6,7 @@ import android.graphics.Canvas;
  * Created by Kush on 4/2/2015.
  */
 public interface Drawable {
-    public void draw(Canvas canvas, int height, int width);
+    public float getXPosition();
+    public float getYPosition();
+    public boolean updatePosition();
 }

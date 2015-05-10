@@ -32,7 +32,7 @@ public class SurfaceRenderer implements Renderer {
     private final float[] mtrxProjection = new float[16];
     private final float[] mtrxView = new float[16];
     private final float[] mtrxProjectionAndView = new float[16];
-
+    private int[] texturenames = new int[10];
     // Geometric variables
     public static float vertices[];
     public static short indices[];
@@ -89,8 +89,8 @@ public class SurfaceRenderer implements Renderer {
         SetupBGTriangle();
         SetupBGImage();
         Render(mtrxProjectionAndView, 3);
-        SetupCircTriangle();
         SetupCircImage();
+        SetupCircTriangle();
         Render(mtrxProjectionAndView, 9);
         int hittype;
         if (taylormode){
@@ -123,7 +123,8 @@ public class SurfaceRenderer implements Renderer {
 
     }
     private void Render(float[] m, int index) {
-
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0+index);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texturenames[index]);
         // get handle to vertex shader's vPosition member
         int mPositionHandle =
                 GLES20.glGetAttribLocation(GraphicTools.sp_Image, "vPosition");
@@ -770,7 +771,6 @@ public class SurfaceRenderer implements Renderer {
         System.out.println("index:"+Customize.index);
         System.out.println("Color:"+Customize.kanyeNames.get(Customize.index));
         if (taylormode) {
-            int[] texturenames = new int[10];
             GLES20.glGenTextures(10, texturenames, 0);
             bitmapToTexture("drawable/arrowmap", texturenames, 0);
             bitmapToTexture("drawable/taylorheadmap", texturenames, 1);
@@ -784,7 +784,6 @@ public class SurfaceRenderer implements Renderer {
             bitmapToTexture("drawable/tunnel", texturenames, 9);
         }
         else {
-            int[] texturenames = new int[10];
             GLES20.glGenTextures(10, texturenames, 0);
             bitmapToTexture("drawable/arrowmap", texturenames, 0);
             bitmapToTexture("drawable/"+Customize.kanyeNames.get(Customize.index), texturenames, 1);

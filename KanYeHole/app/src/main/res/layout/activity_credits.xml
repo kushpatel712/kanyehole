@@ -8,7 +8,7 @@
     tools:context="com.dropout.kanyehole.CreditsActivity">
 
 
-    <VideoView android:id="@+id/webView"
+    <VideoView android:id="@+id/videoView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -16,11 +16,21 @@
 
 
         />
+    <TextView android:text="Credits"
+        android:textSize="60sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/credits"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/videoView"
+
+        />
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:layout_below="@+id/webView">
+        android:layout_below="@+id/credits">
+
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
             android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -30,46 +40,18 @@
             tools:context="com.dropout.kanyehole.CreditsActivity">
 
 
-            <TextView android:text="Credits"
-                android:textSize="50dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/credits"/>
 
-            <TextView android:text="Songs:"
+
+            <TextView android:text="Songs"
+
                 android:textSize="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/songs"
-                android:layout_below="@+id/credits"/>
+                android:scrollbars = "vertical"
+                />
 
-            <TextView android:text="Flashing Lights by Kanye West\n"
-                android:textSize="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/flash"
-                android:layout_below="@+id/songs"/>
-            <TextView android:text="You belong with me by Taylor Swift\n\n\n\n\n\n\n\n
-    "
-                android:textSize="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/youbelong"
-                android:layout_below="@+id/flash"/>
 
-            <TextView android:text="Images taken from: Google Images and edited with GIMP\n"
-                android:textSize="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/images"
-                android:layout_below="@+id/youbelong"/>
-
-            <TextView android:text="Developed by Nathan Nguyen, Kush Patel, and Hanpei Zhang\n"
-                android:textSize="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/team"
-                android:layout_below="@+id/images"/>
 
         </RelativeLayout>
         </ScrollView>

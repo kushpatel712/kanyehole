@@ -360,7 +360,9 @@ public class GameActivity extends Activity {
         }
         Arrow arrow = arrows.get(0);
         float ypos = arrow.getYPosition();
-        ypos -= Buttons.arrow_height-40;
+        //System.out.println("Arrow:"+ypos+" Y:"+Buttons.standard_Y);
+        ypos -= mScrHeight/11.7; // Calibrated for most phones, but may need to later add a calibration activity for edge cases
+        //System.out.println("ypos:"+ypos+" Y:"+Buttons.standard_Y);
         if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/4){
 
             arrow.miss = false;

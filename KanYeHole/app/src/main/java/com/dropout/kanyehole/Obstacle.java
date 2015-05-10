@@ -33,10 +33,8 @@ public class Obstacle implements Drawable{
         taylormode = taymode;
         position.x=mScrWidth/2;
         position.y=mScrHeight/4+mScrHeight/12;
-        speed.x = (float) (Math.cos(startAngle*2*Math.PI/360));
-        speed.y = (float)(Math.sin(startAngle*2*Math.PI/360));
-        speed.x*=2;
-        speed.y*=2;
+        speed.x = (float)(mScrWidth/540.0)*(float) (Math.cos(startAngle*2*Math.PI/360));
+        speed.y = (float)(mScrWidth/540.0)*(float)(Math.sin(startAngle*2*Math.PI/360));
         angle=startAngle;
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;

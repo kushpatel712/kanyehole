@@ -51,9 +51,8 @@ public class MenuActivity extends Activity {
         startActivity(intent);
     }
     public void sendCustom(View view){
-        Intent intent = new Intent(this, Customize.class);
+        Intent intent = new Intent(this, CreditsActivity.class);
         startActivity(intent);
-        finish();
     }
     public void sendLeader(View view){
         Intent intent = new Intent(this, Leaderboard.class);

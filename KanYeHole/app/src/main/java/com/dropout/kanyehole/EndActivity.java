@@ -20,15 +20,19 @@ public class EndActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CharSequence score = getIntent().getCharSequenceExtra("Score");
+//        Intent intent = new Intent("finish_activity");
+//        sendBroadcast(intent);
         setContentView(R.layout.end_layout);
         TextView scoreText = (TextView) findViewById(R.id.score);
         scoreText.setText("Score: "+score);
         StringBuilder sb= new StringBuilder();
         Leaderboard.savePreferences("kanye", score+" ");
-        Leaderboard.scores.add((String) score+"");
+       // Leaderboard.scores.add((String) score+"");
+        boolean color = true;
     }
 
     public void onBackPressed(){
+        // super.onBackPressed();
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
 

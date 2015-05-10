@@ -52,7 +52,7 @@ public class Arrow implements Drawable{
             position.x=Buttons.left_X;
             position.y=mScrHeight/2;
         }
-        this.setSpeed(0,5);
+        this.setSpeed(0,mScrHeight/300);
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
     }

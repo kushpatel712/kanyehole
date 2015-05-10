@@ -21,26 +21,20 @@ public class Arrow implements Drawable{
     * */
     android.graphics.PointF position, speed;
     double angle = 0;
-    int count=0;
+    double id = 0;
     boolean added=false;
     int mScrWidth, mScrHeight;
     public boolean outside = false;
-    public boolean touch = false;
     public boolean perfect = false;
     public boolean miss = true;
-    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     Context context=MyApplication.getAppContext();
     Bitmap b = BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowup);
 
     public Arrow(int startAngle, int mScrWidth, int mScrHeight){
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();
-        //position.x = mScrWidth/2+(float)Math.random()*(mScrWidth/2);
-        // position.y = mScrHeight/4+(float)Math.random()*(mScrHeight/4);
         position.x=mScrWidth/2;
         position.y=mScrHeight/4;
-        //speed.x = (float) (Math.sin(startAngle));
-        // speed.y = (float)(Math.cos(startAngle));
         angle=startAngle;
         if (angle == 0){
             position.x=Buttons.up_X;
@@ -63,41 +57,22 @@ public class Arrow implements Drawable{
         this.mScrHeight = mScrHeight;
     }
 
-    public void setXPosition(float x){
-        position.x = x;
-    }
-    public void setYPosition(float y){
-        position.y = y;
-    }
-    public void setPosition(float x, float y){
-        position.x = x;
-        position.y = y;
-    }
     public boolean updatePosition(){
-        // setSpeed(speed.x,speed.y);
-        //position.x = Math.abs((position.x +speed.x)%mScrWidth);
         position.y =Math.abs((position.y+ speed.y)%mScrHeight);
-        //double distance = Math.sqrt(Math.pow(position.x-mScrWidth/2,2)+Math.pow(position.y-mScrHeight/4,2));
-        //System.out.println("dist"+distance+" rad"+(mScrWidth/4+21));
         if (position.y == Buttons.standard_Y){
             perfect = true;
-
         }
         if((!this.added)&&(position.y>=mScrHeight*3/4)){
-
             addArrow();
             this.added=true;
-            System.out.println("added");
         }
-        if (position.y > mScrHeight*5.75/6){
+        if (position.y > mScrHeight*5.95/6){
             outside = true;
             perfect = false;
             this.remove();
-            if (miss){
+            if (miss) {
                 return true;
             }
-
-
         }
         return false;
     }
@@ -111,25 +86,6 @@ public class Arrow implements Drawable{
         speed.x = xSpeed;
         speed.y = ySpeed;
     }
-
-
-    public int bitWidth(){
-        return  b.getWidth();
-    }
-    public int bitHeight(){
-        return  b.getHeight();
-    }
-    public float getObjectXPosition(){
-        return this.position.x;
-    }
-    public float getObjectYPosition(){
-        return this.position.y;
-    }
-    public Rect getArrowRectangle(){
-        Rect rectangle=new Rect((int) this.getObjectXPosition(),(int) this.getObjectYPosition(),(int)this.getObjectXPosition()+b.getWidth(),(int)this.getObjectYPosition()+b.getHeight());
-        return rectangle;
-    }
-
     public void remove(){
         try {
             if (angle == 0) {
@@ -147,10 +103,7 @@ public class Arrow implements Drawable{
             }
         }
         catch(NullPointerException n){
-
         }
-
-
     }
     public void addArrow(){
         try {

@@ -1,3 +1,10 @@
+/* Much of the initialization for OPENGL renderer and paramters for drawing, as well as the
+    way for drawing using vertices, indexes and uv matrixes taken/modified from a set of GLES2.0
+    Tutorials that can be found (part 1-6) at:
+    
+    http://androidblog.reindustries.com/a-real-open-gl-es-2-0-2d-tutorial-part-1/
+
+ */
 package com.dropout.kanyehole;
 
 import java.nio.ByteBuffer;
@@ -13,19 +20,14 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.view.MotionEvent;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SurfaceRenderer implements Renderer {
-    Context context=MyApplication.getAppContext();
     GameActivity ga;
     TayActivity ta;
-    public Sprite sprite;
     // Our matrices
     private final float[] mtrxProjection = new float[16];
     private final float[] mtrxView = new float[16];
@@ -38,7 +40,7 @@ public class SurfaceRenderer implements Renderer {
     public FloatBuffer vertexBuffer;
     public ShortBuffer drawListBuffer;
     public FloatBuffer uvBuffer;
-    // Our screenresolution
+    // screenresolution
     float   mScreenWidth ;
     float   mScreenHeight;
     float   ssu = 1.0f;
@@ -49,7 +51,6 @@ public class SurfaceRenderer implements Renderer {
     // Misc
     Context mContext;
     long mLastTime;
-    int mProgram;
     private boolean taylormode = false;
     public SurfaceRenderer(Context c, int height, int width, boolean taymode, GameActivity g, TayActivity t)
     {
@@ -58,15 +59,11 @@ public class SurfaceRenderer implements Renderer {
         taylormode = taymode;
         mScreenHeight = height;
         mScreenWidth = width;
-        sprite = new Sprite();
         mContext = c;
         mLastTime = System.currentTimeMillis() + 100;
     }
 
-    public void onPause()
-    {
-        /* Do stuff to pause the renderer */
-    }
+
 
     public void onResume()
     {
@@ -89,11 +86,6 @@ public class SurfaceRenderer implements Renderer {
         // clear Screen and Depth Buffer,
         // we have set the clear color as black.
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-//        bitmapToTexture("drawable/arrowmap", texturenames, 0);
-//        bitmapToTexture("drawable/kanyeheadmap", texturenames, 1);
-//        bitmapToTexture("drawable/taylorheadmap", texturenames, 2);
-//        bitmapToTexture("drawable/bgsmall", texturenames, 3);
-//        bitmapToTexture("drawable/bgsmalltaylor", texturenames, 4);
         SetupBGTriangle();
         SetupBGImage();
         Render(mtrxProjectionAndView, 3);
@@ -119,9 +111,6 @@ public class SurfaceRenderer implements Renderer {
         UpdateArrowTriangle();
         UpdateArrowImage();
         Render(mtrxProjectionAndView, 0);
-//        UpdateTriangle2();
-//        UpdateImage2();
-//        Render(mtrxProjectionAndView, 0);
        UpdateObstacleTriangle();
        UpdateObstacleImage();
         Render(mtrxProjectionAndView, 2);
@@ -134,8 +123,6 @@ public class SurfaceRenderer implements Renderer {
 
     }
     private void Render(float[] m, int index) {
-
-
 
         // get handle to vertex shader's vPosition member
         int mPositionHandle =
@@ -176,10 +163,6 @@ public class SurfaceRenderer implements Renderer {
         GLES20.glUniform1i ( mSamplerLoc, index);
 
         // Draw the triangle
-       // System.out.println("DRAWLISTBUFFER" + drawListBuffer.remaining());
-//       / for (short s: drawListBuffer.array()){
-//            System.out.print(s+" ");
-//        }
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indices.length,
                 GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
 
@@ -223,46 +206,11 @@ public class SurfaceRenderer implements Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         // Setup our scaling system
         SetupScaling();
-        //SetupKanyeTriangle();
-        // Create the triangles
-        //SetupTriangle();
-        //UpdateTriangle();
 
-        //UpdateImage();
-        // Create the image information
-        //SetupKanyeImage();
-       // drawstuff(gl,config);
         SetupImages();
-        drawstuff(gl,config);
-//        // Set the clear color to black
-//        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);
-//
-//        // Create the shaders, solid color
-//        int vertexShader = GraphicTools.loadShader(GLES20.GL_VERTEX_SHADER,
-//                GraphicTools.vs_SolidColor);
-//        int fragmentShader = GraphicTools.loadShader(GLES20.GL_FRAGMENT_SHADER,
-//                GraphicTools.fs_SolidColor);
-//
-//        GraphicTools.sp_SolidColor = GLES20.glCreateProgram();
-//        GLES20.glAttachShader(GraphicTools.sp_SolidColor, vertexShader);
-//        GLES20.glAttachShader(GraphicTools.sp_SolidColor, fragmentShader);
-//        GLES20.glLinkProgram(GraphicTools.sp_SolidColor);
-//
-//        // Create the shaders, images
-//        vertexShader = GraphicTools.loadShader(GLES20.GL_VERTEX_SHADER,
-//                GraphicTools.vs_Image);
-//        fragmentShader = GraphicTools.loadShader(GLES20.GL_FRAGMENT_SHADER,
-//                GraphicTools.fs_Image);
-//
-//        GraphicTools.sp_Image = GLES20.glCreateProgram();
-//        GLES20.glAttachShader(GraphicTools.sp_Image, vertexShader);
-//        GLES20.glAttachShader(GraphicTools.sp_Image, fragmentShader);
-//        GLES20.glLinkProgram(GraphicTools.sp_Image);
-//
-//        // Set our shader programm
-//        GLES20.glUseProgram(GraphicTools.sp_Image);
+        drawSettings(gl,config);
     }
-    public void drawstuff(GL10 gl, EGLConfig config){
+    public void drawSettings(GL10 gl, EGLConfig config){
         // Set the clear color to black
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);
         gl.glDisable(GL10.GL_DITHER);
@@ -320,14 +268,11 @@ public class SurfaceRenderer implements Renderer {
     }
     public void UpdateHitTriangle()
     {
-        // Our collection of vertices
         vertices = new float[(1)*4*3];
             float xoff = 200.0f*ssu;
             float yoff = 60.0f*ssu;
             float x = swp*(1.0f/2.0f)-xoff/2;
-            //float x = swp-draw.getXPosition();
             float y = shp-shp*(2.0f/3.0f)-yoff/2;
-            //System.out.println(x);
             vertices[0] = x;
             vertices[1] = y + yoff;
             vertices[2] = 0f;
@@ -388,14 +333,11 @@ public class SurfaceRenderer implements Renderer {
         }else{
          arc = ga.kanyeArc;
             }
-        // Our collection of vertices
         vertices = new float[(1)*4*3];
             if (arc == null)
                 return;
             float x = arc.getXPosition();
-            //float x = swp-draw.getXPosition();
             float y = shp-arc.getYPosition();
-            //System.out.println(x);
             vertices[0] = x - 15.0f*ssu;
             vertices[1] = y + 15.0f*ssu;
             vertices[2] = 0f;
@@ -484,7 +426,6 @@ public class SurfaceRenderer implements Renderer {
         }else{
             drawList = new ArrayList<Drawable>(ga.drawList);
         }
-       // System.out.println(drawList.size());
         // Our collection of vertices
         int num = 0;
         vertices = new float[(drawList.size())*4*3];
@@ -495,11 +436,7 @@ public class SurfaceRenderer implements Renderer {
                 continue;
             num++;
             float x = draw.getXPosition();
-
-            //float x = swp-draw.getXPosition();
             float y = shp-draw.getYPosition();
-           //System.out.println("x: "+x+" y:"+y);
-            //System.out.println(x);
             vertices[(index*12) + 0] = x;
             vertices[(index*12) + 1] = y + Buttons.arrow_height;//(60.0f*ssu);
             vertices[(index*12) + 2] = 0f;
@@ -536,7 +473,6 @@ public class SurfaceRenderer implements Renderer {
             // normal quad = 0,1,2,0,2,3 so the next one will be 4,5,6,4,6,7
             last = last + 4;
         }
-        //System.out.println("expected: "+drawList.size()+" actual: "+num);
         // The vertex buffer.
         ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -552,9 +488,6 @@ public class SurfaceRenderer implements Renderer {
         drawListBuffer.position(0);
     }
     public void UpdateArrowImage() {
-        // We will use a randomizer for randomizing the textures from texture atlas.
-        // This is strictly optional as it only effects the output of our app,
-        // Not the actual knowledge.
         ArrayList<Drawable> drawList;
         if (taylormode) {
             drawList = new ArrayList<Drawable>(ta.drawList);
@@ -674,9 +607,6 @@ public class SurfaceRenderer implements Renderer {
         drawListBuffer.position(0);
     }
     public void UpdateObstacleImage() {
-        // We will use a randomizer for randomizing the textures from texture atlas.
-        // This is strictly optional as it only effects the output of our app,
-        // Not the actual knowledge.
         ArrayList<Drawable> obsList;
         if (taylormode){
             obsList = new ArrayList<Drawable>(ta.obsList);
@@ -780,8 +710,6 @@ public class SurfaceRenderer implements Renderer {
         float radius =  centerx *.7f;
         float topx = centerx - radius;
         float topy = shp-centery+radius;
-        //System.out.println("swp"+swp+" shp"+shp);
-        //System.out.println("topx:" +topx+" topy:"+topy+" botx:"+(topx+radius*2)+" boty:"+(topy-radius*2)+" radius:"+radius);
         vertices = new float[(1)*4*3];
         vertices[0] = topx;
         vertices[1] = topy;//shp
@@ -853,7 +781,7 @@ public class SurfaceRenderer implements Renderer {
             bitmapToTexture("drawable/miss", texturenames, 6);
             bitmapToTexture("drawable/great", texturenames, 7);
             bitmapToTexture("drawable/perfect", texturenames, 8);
-            bitmapToTexture("drawable/bgcirc", texturenames, 9);
+            bitmapToTexture("drawable/tunnel", texturenames, 9);
         }
         else {
             int[] texturenames = new int[10];
@@ -867,7 +795,7 @@ public class SurfaceRenderer implements Renderer {
             bitmapToTexture("drawable/miss", texturenames, 6);
             bitmapToTexture("drawable/great", texturenames, 7);
             bitmapToTexture("drawable/perfect", texturenames, 8);
-            bitmapToTexture("drawable/bgcirc", texturenames, 9);
+            bitmapToTexture("drawable/tunnel", texturenames, 9);
         }
 
 

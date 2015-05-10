@@ -63,7 +63,6 @@ public class TayActivity extends Activity {
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //requestWindowFeature(Window.FEATURE_NO_TITLE); //hide title bar
         getWindow().setFlags(0xFFFFFFFF,
                 LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
@@ -125,6 +124,7 @@ public class TayActivity extends Activity {
 
         mainView = (android.widget.FrameLayout) findViewById(R.id.rtay);
        // initializeButtonCoordinates();
+        clearArrowArrays();
         mainView.addView(arcView); //add ball to main screen
 //        mainView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 //
@@ -255,11 +255,11 @@ public class TayActivity extends Activity {
                     }
                 });
 
-                if (ticks %500 == 4){
+                if (ticks %60 == 4){
                     ObstacleGenerator obsGen = new ObstacleGenerator();
                     obsGen.generate(arcView, mScrWidth, mScrHeight, true);
                 }
-                if (ticks %500 == 0){
+                if (ticks %115 == 0){
                     ArrowGenerator arrGen = new ArrowGenerator();
                     arrGen.generate(arcView, mScrWidth, mScrHeight);
                 }
@@ -340,6 +340,12 @@ public class TayActivity extends Activity {
         System.out.println("Actual Left:"+left.getX()+" "+"Down:"+down.getX()+" "+"Up:"+up.getX()+" "+"Right:"+right.getLeft()+" ");
         System.out.println("end "+drawList.size()+" ");
 
+    }
+    public void clearArrowArrays(){
+        Buttons.rightArrows.clear();
+        Buttons.leftArrows.clear();
+        Buttons.upArrows.clear();
+        Buttons.downArrows.clear();
     }
 
     public void upPressed(View view){

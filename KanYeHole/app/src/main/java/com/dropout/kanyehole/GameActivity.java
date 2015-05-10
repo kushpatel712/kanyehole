@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +22,7 @@ import android.view.*;
 //
 import android.os.Handler;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -66,11 +68,9 @@ public class GameActivity extends Activity {
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //requestWindowFeature(Window.FEATURE_NO_TITLE); //hide title bar
         getWindow().setFlags(0xFFFFFFFF,
                 LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
         setContentView(R.layout.game_layout);
 
         MyApplication.setContext(this.getBaseContext());
@@ -79,18 +79,13 @@ public class GameActivity extends Activity {
         // Set the Renderer for drawing on the GLSurfaceView
         // Create an OpenGL ES 2.0 context.
         glSurfaceView.setEGLContextClientVersion(2);
-        //setZOrderOnTop(true);
         glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 
         glSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
-        // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new SurfaceRenderer(this, mScrHeight, mScrWidth, false, this, null);
         glSurfaceView.setRenderer(mRenderer);
-        // Render the view only when there is a change in the drawing data
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
-        //create pointer to main screen
-       // final FrameLayout mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
         music = MediaPlayer.create(MyApplication.getAppContext(),R.raw.flclean);
         music.start();
 
@@ -106,20 +101,8 @@ public class GameActivity extends Activity {
         drawList = arcView.getDrawList();
         obsList = arcView.getObsList();
 
-//        BroadcastReceiver broadcast_reciever = new BroadcastReceiver() {
-//
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                String action = intent.getAction();
-//                if (action.equals("finish_activity")) {
-//                    unregisterReceiver(this);
-//                    finish();
-//                }
-//            }
-//        };
-//        registerReceiver(broadcast_reciever, new IntentFilter("finish_activity"));
-
         mainView = (android.widget.FrameLayout) findViewById(R.id.rgame);
+        clearArrowArrays();
         initializeButtonCoordinates();
         mainView.addView(arcView); //add ball to main screen
         mainView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -130,6 +113,51 @@ public class GameActivity extends Activity {
 
             }
         });
+        ImageButton up=(ImageButton)findViewById(R.id.up);
+        View.OnTouchListener upListener=new View.OnTouchListener(){
+            public boolean onTouch(    View v,    MotionEvent event){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    upPressed(v);
+                }
+                return false;
+            }
+        }
+                ;
+        ImageButton down=(ImageButton)findViewById(R.id.down);
+        View.OnTouchListener downListener=new View.OnTouchListener(){
+            public boolean onTouch(    View v,    MotionEvent event){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    downPressed(v);
+                }
+                return false;
+            }
+        }
+                ;
+        ImageButton left=(ImageButton)findViewById(R.id.left);
+        View.OnTouchListener leftListener=new View.OnTouchListener(){
+            public boolean onTouch(    View v,    MotionEvent event){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    leftPressed(v);
+                }
+                return false;
+            }
+        }
+                ;
+        ImageButton right=(ImageButton)findViewById(R.id.right);
+        View.OnTouchListener rightListener=new View.OnTouchListener(){
+            public boolean onTouch(    View v,    MotionEvent event){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    rightPressed(v);
+                }
+                return false;
+            }
+        }
+                ;
+        up.setOnTouchListener(upListener);
+        down.setOnTouchListener(downListener);
+        left.setOnTouchListener(leftListener);
+        right.setOnTouchListener(rightListener);
+
         listen = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
@@ -151,22 +179,6 @@ public class GameActivity extends Activity {
 
     }
 
-//    //listener for menu button on phone
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        menu.add("Exit"); //only one menu item
-//        return super.onCreateOptionsMenu(menu);
-//    }
-
-    //listener for menu item clicked
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle item selection
-//        if (item.getTitle() == "Exit") //user clicked Exit
-//            finish(); //will call onPause
-//        return super.onOptionsItemSelected(item);
-//    }
-
     //For state flow see http://developer.android.com/reference/android/app/Activity.html
     @Override
     public void onPause() //app moved to background, stop background threads
@@ -177,7 +189,6 @@ public class GameActivity extends Activity {
         mTmr = null;
         mTsk = null;
         super.onPause();
-        //music.release();
     }
 
     @Override
@@ -185,8 +196,6 @@ public class GameActivity extends Activity {
     {
         music.seekTo(musicpos);
         music.start();
-       // mRenderer.UpdateImages();
-        //create timer to move ball to new position
         mTmr = new Timer();
         long time=System.currentTimeMillis();
         mTsk = new TimerTask() {
@@ -194,16 +203,18 @@ public class GameActivity extends Activity {
                 if (notPaused) {
 
                     kanyeArc.updatePosition();
-                    //System.out.println(kanyeArc.getXPosition()+" "+kanyeArc.getYPosition());
 
                     for (int i = 0; i < drawList.size();i++){
                         Drawable d = drawList.get(i);
-                        if(d.updatePosition()){
-                            multiplier.getAndSet(1);
-                            hittype.getAndSet(0);
-                        }
+                        boolean missed = d.updatePosition();
+
                         if (d.getClass().equals(Arrow.class)){
                             Arrow a = (Arrow) d;
+                            if(missed){
+                                multiplier.getAndSet(1);
+                                hittype.getAndSet(0);
+
+                            }
                             if (a.outside){
                                 drawList.remove(i);
                                 i--;
@@ -233,11 +244,9 @@ public class GameActivity extends Activity {
                     hittimer = -1;
                     hittype.getAndSet(-1);
                 }
-                //final boolean updatelives = liveschange;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                       // if (updatelives){
                             TextView livesText = (TextView) findViewById(R.id.lives);
                             livesText.setText("Lives: "+currentlives);
                         if (!tayswap &&currentscore > 5000 && currentlives <= 0){
@@ -249,7 +258,6 @@ public class GameActivity extends Activity {
                             endGame(currentscore);
 
                         }
-                       // }
                         TextView scoreText = (TextView) findViewById(R.id.score);
                         scoreText.setText("Score: "+currentscore);
                         TextView multText = (TextView) findViewById(R.id.multiplier);
@@ -257,11 +265,11 @@ public class GameActivity extends Activity {
                     }
                 });
 
-                if (ticks %250 == 4){
+                if (ticks %83 == 4){
                     ObstacleGenerator obsGen = new ObstacleGenerator();
                     obsGen.generate(arcView, mScrWidth, mScrHeight, false);
                 }
-                if (ticks %125 == 0){
+                if (ticks %166 == 0){
                     ArrowGenerator arrGen = new ArrowGenerator();
                     arrGen.generate(arcView, mScrWidth, mScrHeight);
                 }
@@ -275,22 +283,7 @@ public class GameActivity extends Activity {
         mTmr.schedule(mTsk, 10, 10); //start timer
         super.onResume();
     } // onResume
-    public void setRender(boolean tay){
-        glSurfaceView =
-                (GLSurfaceView)findViewById(R.id.glsurfaceview);
-        // Set the Renderer for drawing on the GLSurfaceView
-        // Create an OpenGL ES 2.0 context.
-        glSurfaceView.setEGLContextClientVersion(2);
-        //setZOrderOnTop(true);
-        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 
-        glSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
-        // Set the Renderer for drawing on the GLSurfaceView
-        mRenderer = new SurfaceRenderer(this, mScrHeight, mScrWidth, tay, this, null);
-        glSurfaceView.setRenderer(mRenderer);
-        // Render the view only when there is a change in the drawing data
-        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-    }
     public void tayGame(int curscore, int curmult){
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         Intent intent = new Intent(this, TayActivity.class);
@@ -302,29 +295,18 @@ public class GameActivity extends Activity {
     public void endGame(int curscore){
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         Intent intent = new Intent(this, EndActivity.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Score",""+curscore);
         startActivity(intent);
         finish();
     }
     @SuppressWarnings("deprecation")
     @Override
-    public void onDestroy() //main thread stopped
-    {
+    public void onDestroy() {
         Arc.deleteInstance();
         super.onDestroy();
-        //System.runFinalizersOnExit(true); //wait for threads to exit before clearing app
-       // android.os.Process.killProcess(android.os.Process.myPid());  //remove app from memory
     }
 
-    //listener for config change.
-    //This is called when user tilts phone enough to trigger landscape view
-    //we want our app to stay in portrait view, so bypass event
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
+
     public void onBackPressed(){
         music.pause();
         musicpos = music.getCurrentPosition();
@@ -350,9 +332,7 @@ public class GameActivity extends Activity {
         final ImageButton down = (ImageButton) mainView.findViewById(R.id.down);
         final ImageButton up = (ImageButton) mainView.findViewById(R.id.up);
         final ImageButton right = (ImageButton) mainView.findViewById(R.id.right);
-        System.out.println("fdg: "+up.getLeft()+" Width/height:"+mScrWidth+"/"+mScrHeight);
         left.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        System.out.print("Size: "+b.getWidth());
         Buttons.standard_Y= (int)left.getY();
         Buttons.left_X= (int)left.getX();
         Buttons.down_X= (int)down.getX()+down.getWidth()-b.getWidth();
@@ -364,141 +344,59 @@ public class GameActivity extends Activity {
         Buttons.upRect=new Rect(Buttons.up_X-5,Buttons.standard_Y-5,Buttons.up_X+b.getWidth()+5,Buttons.standard_Y+b.getHeight()+5);
         Buttons.downRect=new Rect(Buttons.down_X-5,Buttons.standard_Y-5,Buttons.down_X+b.getWidth()+5,Buttons.standard_Y+b.getHeight()+5);
         Buttons.rightRect=new Rect(Buttons.right_X-5,Buttons.standard_Y-5,Buttons.right_X+b.getWidth()+5,Buttons.standard_Y+b.getHeight()+5);
-        System.out.println("Left:"+Buttons.left_X+" "+"Down:"+Buttons.down_X+" "+"Up:"+Buttons.up_X+" "+"Right:"+Buttons.right_X+" ");
-        System.out.println("Actual Left:"+left.getX()+" "+"Down:"+down.getX()+" "+"Up:"+up.getX()+" "+"Right:"+right.getLeft()+" ");
-        System.out.println("end "+drawList.size()+" ");
-
     }
-
-    public void upPressed(View view){
-        if (Buttons.upArrows.size()==0){
+    public void clearArrowArrays(){
+        Buttons.rightArrows.clear();
+        Buttons.leftArrows.clear();
+        Buttons.upArrows.clear();
+        Buttons.downArrows.clear();
+    }
+    public void arrowPressed(ArrayList<Arrow> arrows){
+        if (arrows.size()==0){
             multiplier.getAndSet(1);
             hittype.getAndSet(0);
             hittimer = 0;
             return;
         }
-        Arrow arrow = Buttons.upArrows.get(0);
+        Arrow arrow = arrows.get(0);
         float ypos = arrow.getYPosition();
-        ypos -= Buttons.arrow_height+60;
-        System.out.println("Up: "+ypos +" Image: "+Buttons.standard_Y + " ArrowHeight: " + Buttons.arrow_height);
-            if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/4){
-                System.out.println("perfect");
-                multiplier.getAndAdd(2);
-                hittype.getAndSet(2);
-                arrow.miss = false;
-                Buttons.upArrows.remove(0);
+        ypos -= Buttons.arrow_height-40;
+        if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/4){
 
-            }
-            else if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/1.1) {
-                System.out.println("good");
-                multiplier.getAndAdd(1);
-                hittype.getAndSet(1);
-                arrow.miss = false;
-                Buttons.upArrows.remove(0);
-            }
-            else {
-                multiplier.getAndSet(1);
-                hittype.getAndSet(0);
-                System.out.println("miss");
-            }
-            hittimer = 0;
+            arrow.miss = false;
+            multiplier.getAndAdd(2);
+            hittype.getAndSet(2);
+            arrows.remove(0);
+            System.out.println("perfect"+ arrow.id);
+
+        }
+        else if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/1.1) {
+
+            arrow.miss = false;
+            multiplier.getAndAdd(1);
+            hittype.getAndSet(1);
+            arrows.remove(0);
+            System.out.println("good"+ arrow.id);
+        }
+        else {
+            multiplier.getAndSet(1);
+            hittype.getAndSet(0);
+            System.out.println("miss"+ arrow.id);
+        }
+        hittimer = 0;
+    }
+    public void upPressed(View view){
+        arrowPressed(Buttons.upArrows);
     }
     public void rightPressed(View view){
-        if (Buttons.rightArrows.size()==0){
-            multiplier.getAndSet(1);
-            hittype.getAndSet(0);
-            hittimer = 0;
-            return;
-        }
-        Arrow arrow = Buttons.rightArrows.get(0);
-        float ypos = arrow.getYPosition();
-        ypos -= Buttons.arrow_height+60;
-        System.out.println("Right: "+ypos +" Image: "+Buttons.standard_Y+ " ArrowHeight: " + Buttons.arrow_height);
-        if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/4){
-            System.out.println("perfect");
-            arrow.miss = false;
-            multiplier.getAndAdd(2);
-            hittype.getAndSet(2);
-            Buttons.rightArrows.remove(0);
-
-        }
-        else if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/1.1) {
-            System.out.println("good");
-            arrow.miss = false;
-            multiplier.getAndAdd(1);
-            hittype.getAndSet(1);
-            Buttons.rightArrows.remove(0);
-        }
-        else {
-            multiplier.getAndSet(1);
-            hittype.getAndSet(0);
-            System.out.println("miss");
-        }
-        hittimer = 0;
+        arrowPressed(Buttons.rightArrows);
     }
-    public void downPressed(View view){
-        if (Buttons.downArrows.size()==0){
-            multiplier.getAndSet(1);
-            hittype.getAndSet(0);
-            hittimer = 0;
-            return;
-        }
-        Arrow arrow = Buttons.downArrows.get(0);
-        float ypos = arrow.getYPosition();
-        ypos -= Buttons.arrow_height+60;
-        System.out.println("Down: "+ypos +" Image: "+Buttons.standard_Y+ " ArrowHeight: " + Buttons.arrow_height);
-        if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/4){
-            System.out.println("perfect");
-            arrow.miss = false;
-            multiplier.getAndAdd(2);
-            hittype.getAndSet(2);
-            Buttons.downArrows.remove(0);
+    public void
 
-        }
-        else if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/1.1) {
-            System.out.println("good");
-            arrow.miss = false;
-            multiplier.getAndAdd(1);
-            hittype.getAndSet(1);
-            Buttons.downArrows.remove(0);
-        }
-        else {
-            multiplier.getAndSet(1);
-            hittype.getAndSet(0);
-            System.out.println("miss");
-        }
-        hittimer = 0;
+    downPressed(View view){
+        arrowPressed(Buttons.downArrows);
     }
     public void leftPressed(View view){
-        if (Buttons.leftArrows.size()==0){
-            multiplier.getAndSet(1);
-            hittype.getAndSet(0);
-            hittimer = 0;
-            return;
-        }
-        Arrow arrow = Buttons.leftArrows.get(0);
-        float ypos = arrow.getYPosition();
-        ypos -= Buttons.arrow_height+60;
-        System.out.println("Left: "+ypos +" Image: "+Buttons.standard_Y+ " ArrowHeight: " + Buttons.arrow_height);
-        if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/4){
-            System.out.println("perfect");
-            arrow.miss = false;
-            multiplier.getAndAdd(2);
-            hittype.getAndSet(2);
-            Buttons.leftArrows.remove(0);
-        }
-        else if(Math.abs(Buttons.standard_Y - ypos) <= Buttons.arrow_height/1.1) {
-            System.out.println("good");
-            arrow.miss = false;
-            multiplier.getAndAdd(1);
-            hittype.getAndSet(1);
-            Buttons.leftArrows.remove(0);
-        }
-        else {
-            multiplier.getAndSet(1);
-            hittype.getAndSet(0);
-            System.out.println("miss");
-        }
-        hittimer = 0;
+        arrowPressed(Buttons.leftArrows);
     }
 }

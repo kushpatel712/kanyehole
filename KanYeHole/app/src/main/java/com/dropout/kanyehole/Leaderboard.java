@@ -24,20 +24,7 @@ public class Leaderboard extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
-       // View rootView = findViewById(android.R.id.content);
-
-      /* rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            public void onGlobalLayout() {*/
-
-                loadSavedPreferences("kanye");
-
-           // }
-       // });
-
-
-
-
+        loadSavedPreferences("kanye");
         System.out.println("Leaderboard generated");
     }
 

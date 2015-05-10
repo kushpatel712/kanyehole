@@ -25,7 +25,6 @@ public class Customize extends Activity {
         super.onCreate(savedInstanceState);
         Field[] heads = com.dropout.kanyehole.R.drawable.class.getFields();
         for (Field f : heads) {
-            //System.out.println(f.getName());
             try {
                 if(f.getName().contains("kanyeheadmap")){
                     int resID = getResources().getIdentifier(f.getName() , "drawable", getPackageName());
@@ -70,7 +69,6 @@ public class Customize extends Activity {
 
     }
     public void onBackPressed(){
-        // super.onBackPressed();
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
 
@@ -82,7 +80,6 @@ public class Customize extends Activity {
                 imageHolder.get(index));
         Bitmap croppedBmp = Bitmap.createBitmap(icon, 0, 0, icon.getWidth()/3, icon.getHeight());
         kanyeHead.setImageBitmap(croppedBmp);
-        //kanyeHead.setImageResource(imageHolder.get(index));
 
     }
     public void shiftImageForward(View view){
@@ -98,6 +95,5 @@ public class Customize extends Activity {
     public void sendPlay(View view){
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
-        //finish();
     }
 }

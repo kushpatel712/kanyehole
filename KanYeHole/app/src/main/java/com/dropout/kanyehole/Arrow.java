@@ -1,111 +1,96 @@
-
-        package com.dropout.kanyehole;
-
-        import android.content.Context;
-        import android.graphics.Bitmap;
-        import android.graphics.BitmapFactory;
-        import android.graphics.Canvas;
-        import android.graphics.Color;
-        import android.graphics.Paint;
-        import android.graphics.Rect;
-        import android.graphics.RectF;
-        import android.view.Display;
-        import android.widget.Button;
+package com.dropout.kanyehole;
 
 /**
- * Created by Kush on 4/1/2015
+ * This Class is for the Arrows that move down the screen for DDR.
+ * They can have different angles representing the different directions <- ->
  */
-public class Arrow implements Drawable{
-    /*
-    * TODO: Make me a Flyweight! :D
-    * */
-    android.graphics.PointF position, speed;
-    double angle = 0;
-    double id = 0;
-    boolean added=false;
-    int mScrWidth, mScrHeight;
-    public boolean outside = false;
-    public boolean perfect = false;
-    public boolean miss = true;
-    Context context=MyApplication.getAppContext();
-    Bitmap b = BitmapFactory.decodeResource(context.getResources(), R.drawable.arrowup);
 
-    public Arrow(int startAngle, int mScrWidth, int mScrHeight){
+public class Arrow implements Drawable {
+    public boolean outside = false;
+    public boolean miss = true;
+    private android.graphics.PointF position, speed;
+    private double angle = 0;
+    private double id = 0;
+    public boolean added = false;
+    private int mScrWidth, mScrHeight;
+
+    //Constructor for the Arrow, startAngle defines which arrow direction
+    public Arrow(int startAngle, int mScrWidth, int mScrHeight) {
         position = new android.graphics.PointF();
         speed = new android.graphics.PointF();
-        position.x=mScrWidth/2;
-        position.y=mScrHeight/4;
-        angle=startAngle;
-        if (angle == 0){
-            position.x=Buttons.up_X;
-            position.y=mScrHeight/2;
+        position.x = mScrWidth / 2;
+        position.y = mScrHeight / 2;
+        angle = startAngle;
+
+        //Set position based on the angle
+        if (angle == 0) {
+            position.x = Buttons.up_X;
+        } else if (angle == 90) {
+            position.x = Buttons.right_X;
+        } else if (angle == 180) {
+            position.x = Buttons.down_X;
+        } else if (angle == 270) {
+            position.x = Buttons.left_X;
         }
-        else if (angle == 90){
-            position.x=Buttons.right_X;
-            position.y=mScrHeight/2;
-        }
-        else if (angle == 180){
-            position.x=Buttons.down_X;
-            position.y=mScrHeight/2;
-        }
-        else if (angle == 270){
-            position.x=Buttons.left_X;
-            position.y=mScrHeight/2;
-        }
-        this.setSpeed(0,mScrHeight/300);
+
+        this.setSpeed(0, mScrHeight / 300);
         this.mScrWidth = mScrWidth;
         this.mScrHeight = mScrHeight;
     }
 
-    public boolean updatePosition(){
-        position.y =Math.abs((position.y+ speed.y)%mScrHeight);
-        if (position.y == Buttons.standard_Y){
-            perfect = true;
-        }
-        if((!this.added)&&(position.y>=mScrHeight*3/4)){
+    //Updates the position for the game loop
+    public boolean updatePosition() {
+        //Move the arrow down the screen based on speed
+        position.y = Math.abs((position.y + speed.y) % mScrHeight);
+
+        //Adds the arrow to the Button lists for checking
+        if ((!this.added) && (position.y >= mScrHeight * 3 / 4)) {
             addArrow();
-            this.added=true;
+            this.added = true;
         }
-        if (position.y > mScrHeight*5.95/6){
+
+        //Removes the arrow from the button lists if its at the bottom of the screen
+        if (position.y > mScrHeight * 5.95 / 6) {
             outside = true;
-            perfect = false;
             this.remove();
             if (miss) {
-                return true;
+                return true; // This return is to show that the arrow was never pressed
             }
         }
         return false;
     }
-    public float getXPosition(){
+
+    public float getXPosition() {
         return position.x;
     }
-    public float getYPosition(){
+
+    public float getYPosition() {
         return position.y;
     }
-    public void setSpeed(float xSpeed, float ySpeed){
+    public double getAngle() {return angle;}
+    public void setSpeed(float xSpeed, float ySpeed) {
         speed.x = xSpeed;
         speed.y = ySpeed;
     }
-    public void remove(){
+
+    //Removes the arrow from its respective button list
+    public void remove() {
         try {
             if (angle == 0) {
                 Buttons.upArrows.remove(this);
-                this.b.recycle();
             } else if (angle == 90) {
                 Buttons.rightArrows.remove(this);
-                this.b.recycle();
             } else if (angle == 180) {
                 Buttons.downArrows.remove(this);
-                this.b.recycle();
             } else if (angle == 270) {
                 Buttons.leftArrows.remove(this);
-                this.b.recycle();
             }
-        }
-        catch(NullPointerException n){
+        } catch (NullPointerException n) {
         }
     }
-    public void addArrow(){
+
+    //Adds the arrow to its respective button list
+    public void addArrow() {
         try {
             if (angle == 0) {
                 Buttons.upArrows.add(this);
@@ -120,8 +105,7 @@ public class Arrow implements Drawable{
 
 
             }
-        }
-        catch(NullPointerException n){
+        } catch (NullPointerException n) {
 
         }
 

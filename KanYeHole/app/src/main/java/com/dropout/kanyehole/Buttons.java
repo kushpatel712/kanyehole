@@ -5,7 +5,7 @@ import android.graphics.Rect;
 import java.util.ArrayList;
 
 /**
- * Created by Kush on 4/29/2015.
+ * This Class holds some global variables for the arrows and the arrow buttons
  */
 public class Buttons {
 
@@ -16,10 +16,10 @@ public class Buttons {
     static public int left_X;
     static public int arrow_width;
     static public int arrow_height;
-    static public ArrayList<Arrow> upArrows=new ArrayList<Arrow>();
-    static public ArrayList<Arrow> leftArrows=new ArrayList<Arrow>();
-    static public ArrayList<Arrow> rightArrows=new ArrayList<Arrow>();
-    static public ArrayList<Arrow> downArrows=new ArrayList<Arrow>();
+    static public ArrayList<Arrow> upArrows = new ArrayList<Arrow>();
+    static public ArrayList<Arrow> leftArrows = new ArrayList<Arrow>();
+    static public ArrayList<Arrow> rightArrows = new ArrayList<Arrow>();
+    static public ArrayList<Arrow> downArrows = new ArrayList<Arrow>();
     static public Rect upRect;
     static public Rect leftRect;
     static public Rect rightRect;

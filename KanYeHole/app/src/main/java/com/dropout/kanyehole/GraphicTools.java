@@ -1,12 +1,20 @@
+/* This class taken from an OPENGL tutorial.
+    Tutorials can be found (part 1-6) at:
+
+    http://androidblog.reindustries.com/a-real-open-gl-es-2-0-2d-tutorial-part-1/
+
+ */
+
 package com.dropout.kanyehole;
 
 import android.opengl.GLES20;
 
+/**
+ * This Class is for the opengl shader and texture strings
+ */
+
 public class GraphicTools {
 
-    // Program variables
-    public static int sp_SolidColor;
-    public static int sp_Image;
     /* SHADER Image
      *
      * This shader is for rendering 2D images straight from a texture
@@ -29,26 +37,28 @@ public class GraphicTools {
                     "void main() {" +
                     "  gl_FragColor = texture2D( s_texture, v_texCoord );" +
                     "}";
-    /* SHADER Solid
-     *
-     * This shader is for rendering a colored primitive.
-     *
-     */
-
     public static final String vs_SolidColor =
             "uniform    mat4        uMVPMatrix;" +
                     "attribute  vec4        vPosition;" +
                     "void main() {" +
                     "  gl_Position = uMVPMatrix * vPosition;" +
                     "}";
-
     public static final String fs_SolidColor =
             "precision mediump float;" +
                     "void main() {" +
                     "  gl_FragColor = vec4(0.5,0,0,1);" +
                     "}";
+    /* SHADER Solid
+     *
+     * This shader is for rendering a colored primitive.
+     *
+     */
+    // Program variables
+    public static int sp_SolidColor;
+    public static int sp_Image;
 
-    public static int loadShader(int type, String shaderCode){
+    //Sets up the shader based on texture usage
+    public static int loadShader(int type, String shaderCode) {
 
         // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
         // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)

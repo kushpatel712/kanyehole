@@ -48,6 +48,16 @@
         android:textStyle="bold"
         android:layout_height="wrap_content"
         android:onClick="shiftImageForward"/>
+    <TextView android:text="Dodge Taylor by \ntilting device Left and Right.\nHit arrows to increase combo.\nHit Play! to start!\n"
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:id="@+id/picksong"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/headimage"
+        android:textSize="20sp"/>
+
     <Button android:text="Play!"
         android:layout_width="wrap_content"
         android:id="@+id/play"

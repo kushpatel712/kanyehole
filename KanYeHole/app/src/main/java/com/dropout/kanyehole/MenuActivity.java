@@ -2,13 +2,14 @@ package com.dropout.kanyehole;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 
+/**
+ * This Class is for the Starting menu
+ */
 
 public class MenuActivity extends Activity {
 
@@ -41,20 +42,21 @@ public class MenuActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendPlay(View view){
+    //Go to game
+    public void sendPlay(View view) {
         Intent intent = new Intent(this, Customize.class);
         startActivity(intent);
         finish();
     }
-    public void sendTay(View view){
-        Intent intent = new Intent(this, TayActivity.class);
-        startActivity(intent);
-    }
-    public void sendCustom(View view){
+
+    //Go to Credits
+    public void sendCredits(View view) {
         Intent intent = new Intent(this, CreditsActivity.class);
         startActivity(intent);
     }
-    public void sendLeader(View view){
+
+    //Go to leaderboard
+    public void sendLeader(View view) {
         Intent intent = new Intent(this, Leaderboard.class);
         startActivity(intent);
     }

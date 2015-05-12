@@ -62,6 +62,7 @@ public class GameActivity extends Activity {
                 LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_layout);
+        MyApplication.setContext(this.getBaseContext());
 
         /* Much of the initialization for OPENGL surfaceview and renderer and parameters for drawing, as well as the
         way for drawing using vertices, indexes and uv matrices taken/modified from a set of GLES2.0
@@ -318,7 +319,7 @@ public class GameActivity extends Activity {
 
     //Go to taylor game and send score/multiplier
     public void tayGame(int curscore, int curmult) {
-        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        //glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         Intent intent = new Intent(this, TayActivity.class);
         intent.putExtra("Score", curscore);
         intent.putExtra("Mult", curmult);
@@ -328,7 +329,7 @@ public class GameActivity extends Activity {
 
     //Go to the end screen with score
     public void endGame(int curscore) {
-        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        //glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         Intent intent = new Intent(this, EndActivity.class);
         intent.putExtra("Score", "" + curscore);
         startActivity(intent);
